@@ -73,5 +73,4 @@ onMounted(() => {
   document.addEventListener('visibilitychange', onVisibilityChange);
 });
 
-
 </script>

@@ -1,0 +1,51 @@
+name: CI/CD Deploy to VM
+
+# Chạy khi bạn push vào branch chính
+on:
+  push:
+    branches:
+      - ${{ secrets.TARGET_BRANCH }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Lấy code từ repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # để có đủ history nếu cần
+
+      # 2. Thiết lập SSH key cho các bước sau
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 3. SSH vào VM và chạy script deploy
+      - name: Pull, Build & Deploy on VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          port: ${{ secrets.VM_PORT }}
+          script: |
+            set -e
+
+            echo "=== BACKEND ==="
+            cd ~/backend
+            git pull origin ${{ secrets.TARGET_BRANCH }}
+            ./mvnw clean package -DskipTests
+            sudo systemctl restart graceful-backend
+
+            echo "=== FRONTEND ==="
+            cd ~/frontend
+            git pull origin ${{ secrets.TARGET_BRANCH }}
+            npm ci
+            npm run build
+
+            echo "Copy frontend dist to Nginx"
+            sudo rm -rf /var/www/html/*
+            sudo cp -r dist/* /var/www/html/
+            echo "🎉 Deploy completed!"

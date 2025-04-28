@@ -21,7 +21,6 @@ const currentLayout = router.currentRoute.value.meta.layout;
 if (currentLayout === 'admin') {
   store.dispatch('fetchUserInfo')
     .catch(err => {
-      // nếu không fetch được (chưa login), không sao
       console.log('Chưa có session hợp lệ hoặc lỗi:', err)
     })
     .finally(() => {
