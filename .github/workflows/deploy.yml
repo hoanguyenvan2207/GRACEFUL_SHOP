@@ -1,23 +1,23 @@
+# .github/workflows/deploy.yml
 name: CI/CD Deploy to VM
 
-# Chạy khi bạn push vào branch chính
 on:
   push:
     branches:
-      - ${{ secrets.TARGET_BRANCH }}
+      - main   # hoặc đổi thành branch bạn muốn
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Lấy code từ repo
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # để có đủ history nếu cần
+          fetch-depth: 0
 
-      # 2. Thiết lập SSH key cho các bước sau
+      # 2. Thiết lập SSH key
       - name: Setup SSH key
         uses: webfactory/ssh-agent@v0.8.1
         with:
@@ -35,17 +35,17 @@ jobs:
 
             echo "=== BACKEND ==="
             cd ~/backend
-            git pull origin ${{ secrets.TARGET_BRANCH }}
+            git pull origin main
             ./mvnw clean package -DskipTests
             sudo systemctl restart graceful-backend
 
             echo "=== FRONTEND ==="
             cd ~/frontend
-            git pull origin ${{ secrets.TARGET_BRANCH }}
+            git pull origin main
             npm ci
             npm run build
 
-            echo "Copy frontend dist to Nginx"
+            echo "Copy frontend to Nginx"
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
-            echo "🎉 Deploy completed!"
+            echo "🎉 Deploy finished!"
