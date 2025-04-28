@@ -1,0 +1,529 @@
+{
+    "header": {
+        "home": "HOME",
+        "products": "PRODUCTS",
+        "sale": "SALE",
+        "freeShipping": "VIETNAM'S NO.1 QUALITY AO DAI",
+        "warranty": "SAFE PAYMENT WITH VNPAY",
+        "membership": "FAST DELIVERY WITH GHTK",
+        "login": "Login",
+        "logout": "Logout",
+        "viewInfo": "View information"
+    },
+    "language": {
+        "en": "English",
+        "vi": "Tiếng việt"
+    },
+    "footer": {
+        "social": {
+            "connect": "Connect with us",
+            "follow": "Follow and get discounts"
+        },
+        "subscribe": {
+            "newsletter": "Subscribe to newsletter:",
+            "emailPlaceholder": "Please enter your email address",
+            "send": "Send"
+        },
+        "company": {
+            "name": "GRACEFUL VIETNAM JOINT STOCK COMPANY",
+            "taxCode": "Tax code: 01086**449",
+            "issuedBy": "Issued by Hanoi Department of Planning and Investment: 05/03/2019",
+            "address": "Registered address: No. 94 Giap Bat Street, Giap Bat Ward, Hoang Mai District, Hanoi, Vietnam",
+            "phone": "Phone: 0969.***.090",
+            "website": "Website: graceful56.shop",
+            "hotline": "HOTLINE: 0969 *** 090"
+        },
+        "about": {
+            "title": "ABOUT",
+            "aoDai": "Ao Dai",
+            "vest": "Women's Vest",
+            "dress": "Dress",
+            "aboutUs": "About Us",
+            "account": "Account",
+            "stores": "Store System",
+            "contact": "Contact"
+        },
+        "policy": {
+            "title": "POLICY",
+            "payment": "Payment Policy",
+            "shipping": "Shipping Policy",
+            "privacy": "Privacy Policy",
+            "returns": "Return Policy"
+        },
+        "paymentMethods": {
+            "title": "PAYMENT METHODS"
+        },
+        "shipping": {
+            "title": "SHIPPING METHODS"
+        },
+        "copyright": "© 2025 Graceful Design. All Rights Reserved."
+    },
+    "filter": {
+        "title": "Filter",
+        "aoDaiType": "Select Ao Dai type",
+        "material": "Select material",
+        "sleeve": "Select sleeve",
+        "supplier": "Select supplier",
+        "color": "Select color",
+        "size": "Select size",
+        "price": "Price",
+        "priceFrom": "From",
+        "priceTo": "To",
+        "clear": "Clear filters"
+    },
+    "home": {
+        "title": "TOP 5 BEST-SELLING PRODUCTS"
+    },
+    "products": {
+        "title": "PRODUCT LIST",
+        "search": "Enter product name, product code...",
+        "sort": {
+            "label": "Sort:",
+            "default": "Default",
+            "priceAsc": "Price: Low to High",
+            "priceDesc": "Price: High to Low",
+            "dateDesc": "Newest Products",
+            "dateAsc": "Oldest Products"
+        },
+        "addToCart": "Add to cart",
+        "buyNow": "Buy now",
+        "total": "Total: {n} products"
+    },
+    "product": {
+        "code": "Product code:",
+        "inStock": "(In stock)",
+        "price": "Price:",
+        "color": "Color:",
+        "size": "Size:",
+        "quantity": "Quantity:",
+        "quantityErrorMax": "Quantity cannot exceed stock!",
+        "quantityErrorMin": "Minimum quantity is 1!",
+        "stock": "Stock: {n}",
+        "stockError": "Please select color and size!",
+        "addToCart": "ADD TO CART",
+        "buyNow": "BUY NOW",
+        "details": "Details",
+        "material": "Material:",
+        "supplier": "Supplier:",
+        "aoDaiType": "Ao Dai type:",
+        "sleeve": "Sleeve:",
+        "description": "Product description",
+        "video": "Product video",
+        "loading": "Loading product information..."
+    },
+    "cart": {
+        "title": "CART",
+        "loading": "Loading cart...",
+        "empty": "Cart is empty",
+        "item": {
+            "code": "Code:",
+            "classification": "Classification: (Color: {color}, Size: {size})",
+            "quantity": "Quantity:",
+            "stock": "Stock: {n}",
+            "quantityErrorMax": "Exceeds available stock!",
+            "quantityErrorMin": "Minimum quantity is 1!"
+        },
+        "total": "Total:",
+        "checkout": "CHECKOUT",
+        "remove": {
+            "title": "Confirm product removal",
+            "content": "Are you sure you want to remove this product from your cart?",
+            "okText": "Confirm",
+            "cancelText": "Cancel"
+        },
+        "add": {
+            "message": "Error",
+            "error": "An error occurred while adding the product to the cart!",
+            "errorQuantity": "The quantity of products in the cart has reached the maximum available stock.",
+            "notification": {
+                "success": {
+                    "message": "Success!",
+                    "description": "Successfully added a new product to your cart!",
+                    "viewCart": "Click to view cart →"
+                }
+            }
+        },
+        "notification": {
+            "success": {
+                "message": "Success!",
+                "description": "Product has been removed from your cart!"
+            }
+        }
+    },
+    "chat": {
+        "chatbot": {
+            "title": "Product consultation with Gemini",
+            "message": "Type a message...",
+            "typing": "Gemini is typing"
+        }
+    },
+    "order-list": {
+        "tabs": {
+            "all": "All",
+            "pending": "Pending Confirmation",
+            "confirmed": "Confirmed",
+            "shipping": "Shipping",
+            "completed": "Completed",
+            "paid": "Paid",
+            "cancelled": "Cancelled"
+        },
+        "list": {
+            "orderTotal": "Total Amount:",
+            "noOrders": "No orders available."
+        },
+        "detail": {
+            "title": "Order Details",
+            "orderCode": "ORDER CODE:",
+            "createdDate": "Created Date:",
+            "status": "Status:",
+            "deliveryAddressTitle": "Delivery Address",
+            "addressLabel": "Address:",
+            "noInfo": "No order information available.",
+            "cancelOrder": "Cancel Order",
+            "step": {
+                "pending": "Pending Confirmation",
+                "confirmed": "Confirmed",
+                "shipping": "Shipping",
+                "completed": "Received",
+                "paid": "Paid",
+                "cancelled": "Cancelled"
+            },
+            "product": {
+                "code": "Product Code:",
+                "classification": "Classification:",
+                "quantity": "Quantity:",
+                "color": "Color:",
+                "size": "Size:"
+            },
+            "summary": {
+                "itemsTotal": "Items Total",
+                "shippingFee": "Shipping Fee",
+                "totalBeforeDiscount": "Subtotal",
+                "voucher": "Voucher",
+                "grandTotal": "Grand Total"
+            },
+            "paymentMethod": {
+                "label": "Payment Method",
+                "transfer": "Bank Transfer",
+                "cod": "Cash on Delivery (COD)"
+            },
+            "orderNote": "Order Note:"
+        },
+        "actions": {
+            "detail": "Details"
+        },
+        "cancel": {
+            "modal": {
+                "title": "Enter Cancellation Reason",
+                "placeholder": "Enter cancellation reason...",
+                "confirm": "Confirm"
+            },
+            "notAllowed": {
+                "title": "Not Allowed",
+                "description": "Only orders in 'Pending Confirmation' status can be canceled."
+            },
+            "warning": {
+                "title": "Warning",
+                "description": "Please enter a cancellation reason."
+            },
+            "confirm": {
+                "title": "Confirm Cancellation",
+                "content": "Are you sure you want to cancel this order?"
+            },
+            "success": {
+                "title": "Success",
+                "description": "The order has been canceled successfully."
+            },
+            "error": {
+                "title": "Error",
+                "description": "An error occurred while canceling the order."
+            }
+        }
+    },
+    "checkout": {
+        "header": {
+            "title": "Checkout",
+            "home": "Home"
+        },
+        "shippingAddress": "Shipping Address",
+        "pleaseSelectAddress": "Please select a shipping address",
+        "address": "Address",
+        "change": "Change",
+        "productInfo": "Product Information",
+        "product": {
+            "classification": "Classification",
+            "color": "Color",
+            "size": "Size",
+            "quantity": "Quantity"
+        },
+        "noProducts": "No products available for checkout.",
+        "paymentInfo": "Payment Information",
+        "discount": "Discount:",
+        "chooseDiscount": "Choose discount code",
+        "subtotal": "Product Total:",
+        "shippingFee": "Shipping Fee:",
+        "totalBeforeDiscount": "Total Before Discount:",
+        "voucherDiscount": "Voucher Discount:",
+        "total": "Total:",
+        "totalPayment": "Amount Due:",
+        "note": "Note:",
+        "enterNote": "Enter note...",
+        "paymentMethod": "Payment Method",
+        "methods": {
+            "cod": "Cash on Delivery (COD)",
+            "vnpay": "Pay with VNPAY"
+        },
+        "PlaceOrder": "PLACE ORDER",
+        "voucherModal": {
+            "title": "Select Discount",
+            "discount": "Discount:",
+            "maxDiscount": "Maximum:",
+            "minOrder": "Minimum order requirement:",
+            "noVouchers": "No vouchers available.",
+            "close": "Close"
+        },
+        "addressModal": {
+            "title": "Select Shipping Address",
+            "useExisting": "Use existing address",
+            "addNew": "Add new address",
+            "existingAddress": "Existing address",
+            "setDefault": "Set as default address",
+            "selectProvince": "Select province/city",
+            "selectDistrict": "Select district",
+            "selectWard": "Select ward",
+            "province": "Province/City",
+            "district": "District",
+            "ward": "Ward",
+            "street": "Street",
+            "close": "Close",
+            "save": "Save"
+        },
+        "placeOrder": {
+            "warning": {
+                "title": "Warning",
+                "description": "Please select a shipping address."
+            },
+            "confirm": {
+                "title": "Confirm Order",
+                "content": "Do you want to place this order?"
+            },
+            "error": {
+                "noProductDetailInfo": {
+                    "title": "Error",
+                    "description": "Product detail information is missing."
+                },
+                "noProducts": {
+                    "title": "Error",
+                    "description": "No products available for placing order."
+                },
+                "invalidProducts": {
+                    "title": "Error",
+                    "description": "No valid products to place order."
+                },
+                "orderPlacement": {
+                    "title": "Error",
+                    "description": "Error placing order. Please try again."
+                }
+            },
+            "success": {
+                "title": "Notification",
+                "content": "Your order has been placed successfully. Would you like to view the order details?",
+                "orderSuccess": "Order placed successfully",
+                "okText": "View details",
+                "cancelText": "Close"
+            },
+            "result": {
+                "viewAllOrders": "View All Orders",
+                "continueShopping": "Continue Shopping"
+            }
+        }
+    },
+    "account": {
+        "sidebar": {
+            "accountInfo": "Account Information",
+            "changePassword": "Change Password",
+            "addressBook": "Address Book",
+            "goBack": "Go Back",
+            "emailLabel": "Email:"
+        },
+        "info": {
+            "title": "Account Information",
+            "gender": "Gender",
+            "male": "Male",
+            "female": "Female",
+            "fullName": "Full Name",
+            "fullNamePlaceholder": "Enter full name",
+            "phone": "Phone Number",
+            "phonePlaceholder": "Enter phone number",
+            "email": "Email",
+            "birthday": "Birthday",
+            "submit": "Save Changes",
+            "confirmUpdateTitle": "Confirm",
+            "confirmUpdateContent": "Are you sure you want to save the changes?"
+        },
+        "validation": {
+            "nameRequired": "Full name is required",
+            "nameNoNumbers": "Full name should not contain numbers",
+            "nameNoSpecial": "Full name should not contain special characters",
+            "phoneRequired": "Phone number is required",
+            "phoneDigits": "Phone number must be exactly 10 digits",
+            "phoneValidPrefix": "Phone number must start with a valid Vietnamese prefix (03, 05, 07, 08, 09)",
+            "birthdayPast": "Birthday must be in the past",
+            "birthdayRequired": "Birthday is required"
+        },
+        "notification": {
+            "updateSuccessTitle": "Success",
+            "updateSuccessDescription": "Account information updated successfully!",
+            "error": "Error"
+        },
+        "addressBook": {
+            "title": "Address Book",
+            "addNew": "+ Add New Address",
+            "loading": "Loading...",
+            "emptyDescription": "You do not have any address yet",
+            "addressInfo": {
+                "streetLabel": "Specific address",
+                "defaultBadge": "Default"
+            },
+            "actions": {
+                "update": "Update",
+                "setDefault": "Set as Default",
+                "delete": "Delete"
+            },
+            "deleteConfirm": {
+                "title": "Are you sure you want to delete this address?",
+                "okText": "Yes",
+                "cancelText": "No"
+            },
+            "notification": {
+                "success": {
+                    "title": "Success",
+                    "description": "Address has been removed from the list"
+                },
+                "error": {
+                    "title": "Lỗi",
+                    "description": "Có lỗi xảy ra khi xóa địa chỉ."
+                }
+            }
+        },
+        "resetPassword": {
+            "title": "Change Password",
+            "subtitle": "For your account security, please do not share your password with others",
+            "labels": {
+                "newPassword": "New Password",
+                "confirmPassword": "Confirm New Password"
+            },
+            "placeholders": {
+                "newPassword": "Enter new password",
+                "confirmPassword": "Re-enter new password"
+            },
+            "button": {
+                "processing": "Processing...",
+                "confirm": "Confirm"
+            },
+            "validation": {
+                "newPasswordRequired": "New password is required",
+                "newPasswordMin": "Password must be at least 8 characters",
+                "confirmPasswordRequired": "Please confirm your password",
+                "confirmPasswordMismatch": "Confirm password does not match"
+            },
+            "notification": {
+                "success": {
+                    "title": "Success",
+                    "description": "Password changed successfully!"
+                },
+                "error": {
+                    "userNotFound": "User information not found. Please log in again.",
+                    "generic": "An error occurred while changing the password"
+                }
+            }
+        }
+    },
+    "addressModal": {
+        "add": {
+            "title": "Add New Address",
+            "labels": {
+                "fullName": "Full Name:",
+                "phone": "Phone Number:",
+                "province": "Province/City:",
+                "district": "District:",
+                "ward": "Ward:",
+                "detailAddress": "Detailed Address:",
+                "defaultAddress": "Set as Default Address"
+            },
+            "placeholders": {
+                "fullName": "Enter full name",
+                "phone": "Enter phone number",
+                "province": "Select Province/City",
+                "district": "Select District",
+                "ward": "Select Ward",
+                "detailAddress": "Enter detailed address"
+            },
+            "button": {
+                "save": "Save",
+                "cancel": "Cancel"
+            },
+            "notification": {
+                "error": {
+                    "title": "Error",
+                    "province": "Unable to load provinces. Please try again later.",
+                    "district": "Unable to load districts. Please try again later.",
+                    "ward": "Unable to load wards. Please try again later.",
+                    "missing": "Please fill in all required information.",
+                    "generic": "Unable to add the address. Please try again later.",
+                    "exist": "Address already exists"
+                },
+                "success": {
+                    "title": "Success",
+                    "added": "New address added successfully."
+                },
+                "info": {
+                    "cancelTitle": "Cancelled",
+                    "cancelDesc": "You have cancelled adding a new address."
+                }
+            }
+        },
+        "edit": {
+            "title": "Edit Address",
+            "labels": {
+                "fullName": "Full Name:",
+                "phone": "Phone Number:",
+                "province": "Province/City:",
+                "district": "District:",
+                "ward": "Ward:",
+                "detailAddress": "Detailed Address:",
+                "defaultAddress": "Set as Default Address"
+            },
+            "placeholders": {
+                "fullName": "Enter full name",
+                "phone": "Enter phone number",
+                "province": "Select Province/City",
+                "district": "Select District",
+                "ward": "Select Ward",
+                "detailAddress": "Enter detailed address"
+            },
+            "button": {
+                "save": "Save",
+                "cancel": "Cancel"
+            },
+            "notification": {
+                "error": {
+                    "title": "Error",
+                    "missing": "Please fill in all required information.",
+                    "district": "Unable to load districts. Please try again later.",
+                    "ward": "Unable to load wards. Please try again later.",
+                    "generic": "Unable to update the address. Please try again later.",
+                    "fetch": "Unable to fetch address details. Please try again later."
+                },
+                "success": {
+                    "title": "Success",
+                    "updated": "Address updated successfully."
+                },
+                "info": {
+                    "cancelTitle": "Cancelled",
+                    "cancelDesc": "You have cancelled editing the address."
+                }
+            }
+        }
+    }
+}

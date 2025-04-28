@@ -1,0 +1,43 @@
+package com.example.datn_be.controller.sanpham;
+
+import com.example.datn_be.dto.sanpham.GioHangDTO;
+import com.example.datn_be.service.sanpham.GioHangService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/gio_hang")
+@CrossOrigin(origins = "http://localhost:5173")
+public class GioHangController {
+
+    @Autowired
+    private GioHangService gioHangService;
+
+    @PostMapping
+    public GioHangDTO createGioHang(@RequestBody GioHangDTO dto) {
+        return gioHangService.createGioHang(dto);
+    }
+
+    @PutMapping("/{id}")
+    public GioHangDTO updateGioHang(@PathVariable Integer id, @RequestBody GioHangDTO dto) {
+        return gioHangService.updateGioHang(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteGioHang(@PathVariable Integer id) {
+        gioHangService.deleteGioHang(id);
+    }
+
+    @GetMapping("/{id}")
+    public GioHangDTO getGioHang(@PathVariable Integer id) {
+        return gioHangService.getGioHang(id);
+    }
+
+    @GetMapping("/khach_hang/{idKhachHang}")
+    public ResponseEntity<List<GioHangDTO>> findAllByKhachHangId(@PathVariable Integer idKhachHang) {
+        return ResponseEntity.ok(gioHangService.findAllByKhachHangId(idKhachHang));
+    }
+}

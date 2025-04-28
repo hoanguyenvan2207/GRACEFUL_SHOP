@@ -1,0 +1,48 @@
+package com.example.datn_be.controller.chat;
+
+import com.example.datn_be.entiy.chat.ChatMessage;
+import com.example.datn_be.entiy.chat.ChatRoomDTO;
+import com.example.datn_be.service.chat.ChatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@CrossOrigin("*")
+public class WebSocketController {
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/chat.sendMessage")
+    public void sendMessage(@Payload ChatMessage message) {
+        // Save the message to the database
+        ChatMessage savedMessage = chatService.sendMessage(message.getIdChatRoom(), message.getSenderType(), message.getNoiDung());
+
+        messagingTemplate.convertAndSend("/topic/room/" + message.getIdChatRoom(), savedMessage);
+    }
+
+    @MessageMapping("/fetch-rooms")
+    @SendTo("/topic/room/update")
+    public List<ChatRoomDTO> fetchRooms(Map<String, Object> payload) {
+        Boolean status = null;
+        if (payload.get("status") != null) {
+            // Nếu client gửi status dưới dạng string, ép kiểu về Boolean
+            try {
+                status = Boolean.valueOf(payload.get("status").toString());
+            } catch (Exception e) {
+                status = null;
+            }
+        }
+        return chatService.loadRooms(status);
+    }
+}

@@ -1,0 +1,7 @@
+package com.example.datn_be.repository.chat;
+
+import com.example.datn_be.entiy.chat.TinNhan;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TinNhanRepository extends JpaRepository<TinNhan, Integer> {
+}
