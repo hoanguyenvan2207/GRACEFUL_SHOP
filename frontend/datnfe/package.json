@@ -33,8 +33,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "vite": "^5.2.10",
     "@vitejs/plugin-vue": "^4.6.2",
-    "vite-plugin-static-copy": "^2.3.1"
+    "vite": "^5.2.10"
   }
 }

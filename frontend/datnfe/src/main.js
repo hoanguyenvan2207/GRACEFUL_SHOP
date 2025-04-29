@@ -8,13 +8,10 @@ import router from "./router/router.js";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/reset.css";
 import { createPinia } from 'pinia';
-import i18n from '../public/i18n/index.js';
+import i18n from './i18n';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import store from './router/store.js';
-import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:8080'
-axios.defaults.withCredentials = true
 
 const currentLayout = router.currentRoute.value.meta.layout;
 
@@ -25,24 +22,26 @@ if (currentLayout === 'admin') {
     })
     .finally(() => {
       const pinia = createPinia()
-      const app = createApp(App);
       pinia.use(piniaPluginPersistedstate);
+
+      const app = createApp(App);
       app.use(pinia)
+      app.use(store);
+      app.use(i18n)
       app.use(router)
       app.use(Antd)
-      app.use(i18n)
-      app.use(store);
       app.mount('#app')
     })
 } else {
   const pinia = createPinia()
-  const app = createApp(App);
   pinia.use(piniaPluginPersistedstate);
+
+  const app = createApp(App);
   app.use(pinia)
+  app.use(store);
+  app.use(i18n)
   app.use(router)
   app.use(Antd)
-  app.use(i18n)
-  app.use(store);
   app.mount('#app')
 }
 
