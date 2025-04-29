@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-name: CI/CD Deploy to VM
+name: CI/CD Build & Deploy to VM
 
 on:
   push:
@@ -9,9 +9,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
 
     steps:
       # 1. Checkout code
@@ -20,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2. Build Backend with Maven
+      # 2. Build Backend
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
@@ -31,21 +28,29 @@ jobs:
           cd backend/DATN_BE
           chmod +x mvnw
           ./mvnw clean package -DskipTests
-        # kết quả: backend/DATN_BE/target/*.jar
 
-      # 3. Build Frontend with Node.js
+      # 3. Build Frontend
       - name: Set up Node.js 18
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Install & Build Vue Frontend
+      - name: Build Vue Frontend
         run: |
           cd frontend/datnfe
           npm ci
           npm run build
-        # kết quả: frontend/datnfe/dist/**
 
-      # 4. Copy artifacts to VM
+      # 4. Debug workspace to see where files are
+      - name: Debug workspace for scp
+        run: |
+          echo "----- ROOT -----"
+          ls -R .
+          echo "----- backend/DATN_BE/target -----"
+          ls -l backend/DATN_BE/target
+          echo "----- frontend/datnfe/dist -----"
+          ls -l frontend/datnfe/dist
+
+      # 5. Copy artifacts to VM
       - name: Copy artifacts to VM
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -56,9 +61,9 @@ jobs:
           source: |
             backend/DATN_BE/target/*.jar
             frontend/datnfe/dist/**
-          target: /home/${{ secrets.VM_USER }}
+          target: /home/${{ secrets.VM_USER }}/
 
-      # 5. SSH into VM and deploy
+      # 6. SSH into VM & deploy
       - name: SSH & Deploy on VM
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -68,14 +73,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
             echo "=== DEPLOY BACKEND ==="
-            # move JAR and restart service
             sudo mv /home/${{ secrets.VM_USER }}/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
-            # copy static files to nginx
             sudo rm -rf /var/www/html/*
             sudo cp -r /home/${{ secrets.VM_USER }}/dist/* /var/www/html/
             sudo systemctl reload nginx
