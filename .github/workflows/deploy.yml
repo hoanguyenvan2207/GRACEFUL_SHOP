@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
       - name: Build Spring Boot JAR
         run: |
-          cd GRACEFUL_SHOP/backend/DATN_BE
+          cd backend/DATN_BE
           chmod +x mvnw
           ./mvnw clean package -DskipTests
 
@@ -36,19 +36,19 @@ jobs:
           node-version: '18'
       - name: Build Vue Frontend
         run: |
-          cd GRACEFUL_SHOP/frontend/datnfe
+          cd frontend/datnfe
           npm ci
           npm run build
 
       # 4. Debug workspace to verify paths
       - name: Debug workspace for scp
         run: |
-          echo "----- ROOT -----"
-          ls -R .
-          echo "----- backend target -----"
-          ls -l GRACEFUL_SHOP/backend/DATN_BE/target
-          echo "----- frontend dist -----"
-          ls -l GRACEFUL_SHOP/frontend/datnfe/dist
+          echo "----- ROOT CONTENTS -----"
+          ls -1 .
+          echo "----- backend/DATN_BE/target -----"
+          ls -l backend/DATN_BE/target
+          echo "----- frontend/datnfe/dist -----"
+          ls -l frontend/datnfe/dist
 
       # 5. Copy artifacts to VM
       - name: Copy artifacts to VM
@@ -59,8 +59,8 @@ jobs:
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: |
-            GRACEFUL_SHOP/backend/DATN_BE/target
-            GRACEFUL_SHOP/frontend/datnfe/dist
+            backend/DATN_BE/target
+            frontend/datnfe/dist
           target: /home/${{ secrets.VM_USER }}/
 
       # 6. SSH into VM & deploy
@@ -75,10 +75,12 @@ jobs:
             set -e
 
             echo "=== DEPLOY BACKEND ==="
+            # Di chuyển app.jar và restart
             sudo mv /home/${{ secrets.VM_USER }}/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
+            # Copy static files và reload nginx
             sudo rm -rf /var/www/html/*
             sudo cp -r /home/${{ secrets.VM_USER }}/dist/* /var/www/html/
             sudo systemctl reload nginx
