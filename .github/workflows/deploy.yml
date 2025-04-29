@@ -34,13 +34,13 @@ jobs:
             set -e
 
             echo "=== BACKEND ==="
-            cd ~/backend
+            cd ~/DATN_Graceful/backend/DATN_BE 
             git pull origin main
             ./mvnw clean package -DskipTests
             sudo systemctl restart graceful-backend
 
             echo "=== FRONTEND ==="
-            cd ~/frontend
+            cd ~/DATN_Graceful/frontend/datnfe
             git pull origin main
             npm ci
             npm run build
