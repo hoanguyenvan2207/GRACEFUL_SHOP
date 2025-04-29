@@ -1,4 +1,5 @@
-name: Pull, Build & Deploy on VM
+# .github/workflows/deploy.yml
+name: CI/CD Deploy to VM
 
 on:
   push:
@@ -9,7 +10,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Execute SSH Commands on VM
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Deploy via SSH to your VM
+      - name: SSH & Deploy on VM
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VM_HOST }}
@@ -22,12 +30,17 @@ jobs:
             echo "=== BACKEND ==="
             cd ~/GRACEFUL_SHOP/backend/DATN_BE
             git pull origin main
+
             chmod +x mvnw
             ./mvnw clean package -DskipTests
             sudo systemctl restart graceful-backend
 
             echo "=== FRONTEND ==="
             cd ~/GRACEFUL_SHOP/frontend/datnfe
+            # Install Node.js & npm (once)
+            sudo apt-get update
+            sudo apt-get install -y nodejs npm
+
             git pull origin main
             npm ci
             npm run build
@@ -35,4 +48,6 @@ jobs:
             echo "Copy frontend to Nginx"
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html/
+            sudo systemctl reload nginx
+
             echo "🎉 Deploy finished!"
