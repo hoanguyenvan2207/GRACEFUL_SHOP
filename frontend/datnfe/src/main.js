@@ -8,7 +8,7 @@ import router from "./router/router.js";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/reset.css";
 import { createPinia } from 'pinia';
-import i18n from './i18n/index.js';
+import i18n from '../public/i18n/index.js';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import store from './router/store.js';
 import axios from 'axios';

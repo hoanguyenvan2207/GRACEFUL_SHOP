@@ -1,22 +1,9 @@
 // vite.config.js
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    viteStaticCopy({
-      targets: [
-        {
-          // copy nguyên thư mục và mọi file con
-          src: 'src/i18n/**/*',
-          // đích là /dist/i18n
-          dest: 'i18n'
-        }
-      ]
-    })
-  ],
+  plugins: [vue()],
 
   server: {
     proxy: {
