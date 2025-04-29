@@ -40,15 +40,15 @@ jobs:
           npm ci
           npm run build
 
-      # 4. Debug workspace to verify paths
-      - name: Debug workspace for scp
-        run: |
-          echo "===== ROOT ====="
-          ls -1 .
-          echo "===== backend target ====="
-          ls -1 backend/DATN_BE/target
-          echo "===== frontend dist ====="
-          ls -1 frontend/datnfe/dist
+      # 4. Debug workspace (bật lên nếu vẫn cần)
+      # - name: Debug workspace for scp
+      #   run: |
+      #     echo "ROOT:"
+      #     ls -1 .
+      #     echo "TARGET JAR:"
+      #     ls -1 backend/DATN_BE/target
+      #     echo "DIST FILES:"
+      #     ls -1 frontend/datnfe/dist
 
       # 5. Copy artifacts to VM
       - name: Copy artifacts to VM
@@ -58,10 +58,9 @@ jobs:
           username: ${{ secrets.VM_USER }}
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # DÙNG PATTERN RÕ RÀNG để tránh empty archive
           source: |
             backend/DATN_BE/target/*.jar
-            frontend/datnfe/dist/**/* 
+            frontend/datnfe/dist   # <-- chỉ cần thư mục, scp-action sẽ đệ quy
           target: /home/${{ secrets.VM_USER }}/deploy/
 
       # 6. SSH into VM & deploy
@@ -76,12 +75,10 @@ jobs:
             set -e
 
             echo "=== DEPLOY BACKEND ==="
-            # Di chuyển JAR vừa scp về vị trí cố định
-            sudo mv /home/${{ secrets.VM_USER }}/deploy/*.jar /home/${{ secrets.VM_USER }}/app.jar
+            sudo mv /home/${{ secrets.VM_USER }}/deploy/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
-            # Copy toàn bộ dist lên Nginx và reload
             sudo rm -rf /var/www/html/*
             sudo cp -r /home/${{ secrets.VM_USER }}/deploy/dist/* /var/www/html/
             sudo systemctl reload nginx
