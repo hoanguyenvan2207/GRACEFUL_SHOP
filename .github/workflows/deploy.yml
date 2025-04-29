@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: CI/CD Build & Deploy to VM
 
 on:
@@ -40,17 +39,17 @@ jobs:
           npm ci
           npm run build
 
-      # 4. Debug workspace (bật lên nếu vẫn cần)
+      # (Tuỳ chọn) Bật debug nếu cần kiểm tra file trước khi scp
       # - name: Debug workspace for scp
       #   run: |
       #     echo "ROOT:"
-      #     ls -1 .
+      #     ls -R .
       #     echo "TARGET JAR:"
-      #     ls -1 backend/DATN_BE/target
+      #     ls -R backend/DATN_BE/target
       #     echo "DIST FILES:"
-      #     ls -1 frontend/datnfe/dist
+      #     ls -R frontend/datnfe/dist
 
-      # 5. Copy artifacts to VM
+      # 4. Copy artifacts to VM
       - name: Copy artifacts to VM
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -58,14 +57,13 @@ jobs:
           username: ${{ secrets.VM_USER }}
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: |
-            backend/DATN_BE/target/*.jar
-            frontend/datnfe/dist   # <-- chỉ cần thư mục, scp-action sẽ đệ quy
+          # Gộp các nguồn bằng dấu phẩy
+          source: "backend/DATN_BE/target/*.jar,frontend/datnfe/dist"
           target: /home/${{ secrets.VM_USER }}/deploy/
 
-      # 6. SSH into VM & deploy
+      # 5. SSH into VM & deploy
       - name: SSH & Deploy on VM
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1   # bạn có thể nâng lên v1.x nếu muốn
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
@@ -75,7 +73,7 @@ jobs:
             set -e
 
             echo "=== DEPLOY BACKEND ==="
-            sudo mv /home/${{ secrets.VM_USER }}/deploy/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
+            sudo mv /home/${{ secrets.VM_USER }}/deploy/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
