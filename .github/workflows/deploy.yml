@@ -43,12 +43,12 @@ jobs:
       # 4. Debug workspace to verify paths
       - name: Debug workspace for scp
         run: |
-          echo "----- ROOT CONTENTS -----"
+          echo "===== ROOT ====="
           ls -1 .
-          echo "----- backend/DATN_BE/target -----"
-          ls -l backend/DATN_BE/target
-          echo "----- frontend/datnfe/dist -----"
-          ls -l frontend/datnfe/dist
+          echo "===== backend target ====="
+          ls -1 backend/DATN_BE/target
+          echo "===== frontend dist ====="
+          ls -1 frontend/datnfe/dist
 
       # 5. Copy artifacts to VM
       - name: Copy artifacts to VM
@@ -58,10 +58,11 @@ jobs:
           username: ${{ secrets.VM_USER }}
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # DÙNG PATTERN RÕ RÀNG để tránh empty archive
           source: |
-            backend/DATN_BE/target
-            frontend/datnfe/dist
-          target: /home/${{ secrets.VM_USER }}/
+            backend/DATN_BE/target/*.jar
+            frontend/datnfe/dist/**/* 
+          target: /home/${{ secrets.VM_USER }}/deploy/
 
       # 6. SSH into VM & deploy
       - name: SSH & Deploy on VM
@@ -75,14 +76,14 @@ jobs:
             set -e
 
             echo "=== DEPLOY BACKEND ==="
-            # Di chuyển app.jar và restart
-            sudo mv /home/${{ secrets.VM_USER }}/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
+            # Di chuyển JAR vừa scp về vị trí cố định
+            sudo mv /home/${{ secrets.VM_USER }}/deploy/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
-            # Copy static files và reload nginx
+            # Copy toàn bộ dist lên Nginx và reload
             sudo rm -rf /var/www/html/*
-            sudo cp -r /home/${{ secrets.VM_USER }}/dist/* /var/www/html/
+            sudo cp -r /home/${{ secrets.VM_USER }}/deploy/dist/* /var/www/html/
             sudo systemctl reload nginx
 
             echo "🎉 Deployment complete!"
