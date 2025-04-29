@@ -63,11 +63,6 @@
             <version>1.18.36</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spring Boot Starter Mail -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
 
         <!-- Spring Security -->
         <dependency>
@@ -156,6 +151,12 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering> <!-- Tắt lọc -->
+            </resource>
+        </resources>
     </build>
 
 </project>
