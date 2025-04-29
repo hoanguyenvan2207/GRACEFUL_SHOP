@@ -1,4 +1,4 @@
-name: CI/CD Deploy to VM
+name: Pull, Build & Deploy on VM
 
 on:
   push:
@@ -8,16 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # 2. Pull, Build & Deploy on VM via SSH
-      - name: Pull, Build & Deploy on VM
+      - name: Execute SSH Commands on VM
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VM_HOST }}
@@ -28,14 +20,14 @@ jobs:
             set -e
 
             echo "=== BACKEND ==="
-            cd ~/DATN_Graceful/backend/DATN_BE
+            cd ~/GRACEFUL_SHOP/backend/DATN_BE
             git pull origin main
             chmod +x mvnw
             ./mvnw clean package -DskipTests
             sudo systemctl restart graceful-backend
 
             echo "=== FRONTEND ==="
-            cd ~/DATN_Graceful/frontend/datnfe
+            cd ~/GRACEFUL_SHOP/frontend/datnfe
             git pull origin main
             npm ci
             npm run build
