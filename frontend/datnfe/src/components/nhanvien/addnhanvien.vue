@@ -198,7 +198,7 @@ export default {
       }
     },
     checkUsername() {
-      axios.get(`/api/admin/nhan-vien/check-username?username=${this.nhanVien.tenDangNhap}`)
+      axios.get(`/api/nhan-vien/check-username?username=${this.nhanVien.tenDangNhap}`)
         .then(response => {
           if (response.data.exists) {
             notification.error({
@@ -314,7 +314,7 @@ export default {
       }
     },
     fetchVaiTros() {
-      axios.get('/api/admin/nhan-vien/show-vai-tro', {
+      axios.get('/api/nhan-vien/show-vai-tro', {
         withCredentials: true
       })
         .then(response => (this.vaiTros = response.data))
@@ -338,7 +338,7 @@ export default {
       this.isLoading = true;
 
       // Kiểm tra số điện thoại
-      axios.get(`/api/admin/nhan-vien/check-phone?phone=${this.nhanVien.soDienThoai}`)
+      axios.get(`/api/nhan-vien/check-phone?phone=${this.nhanVien.soDienThoai}`)
         .then(response => {
           if (response.data.exists) {
             notification.error({
@@ -348,7 +348,7 @@ export default {
             this.isLoading = false;
           } else {
             // Kiểm tra email
-            axios.get(`/api/admin/nhan-vien/check-email?email=${this.nhanVien.email}`)
+            axios.get(`/api/nhan-vien/check-email?email=${this.nhanVien.email}`)
               .then(response => {
                 if (response.data.exists) {
                   notification.error({
@@ -383,7 +383,7 @@ export default {
 
     submitNhanVien() {
       this.nhanVien.id = null;
-      axios.post('/api/admin/nhan-vien/add', this.nhanVien)
+      axios.post('/api/nhan-vien/add', this.nhanVien)
         .then(response => {
           notification.success({
             message: 'Thành công!',

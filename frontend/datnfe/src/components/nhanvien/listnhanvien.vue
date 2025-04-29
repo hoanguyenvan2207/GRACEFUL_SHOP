@@ -176,11 +176,11 @@ export default {
       }
     },
     activateEmployee() {
-      axios.get(`/api/admin/nhan-vien/update/${this.selectedEmployeeId}`)
+      axios.get(`/api/nhan-vien/update/${this.selectedEmployeeId}`)
         .then(response => {
           const nhanVien = response.data;
           nhanVien.trangThai = true;
-          return axios.put(`/api/admin/nhan-vien/update/${this.selectedEmployeeId}`, nhanVien);
+          return axios.put(`/api/nhan-vien/update/${this.selectedEmployeeId}`, nhanVien);
         })
         .then(() => {
           notification.success({
@@ -206,7 +206,7 @@ export default {
 
 
     exportExcel() {
-      axios.get('/api/admin/nhan-vien/export-excel', { responseType: 'blob' })
+      axios.get('/api/nhan-vien/export-excel', { responseType: 'blob' })
         .then(response => {
           const blob = new Blob([response.data], {
             type: response.headers['content-type'] || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -245,7 +245,7 @@ export default {
           page: this.currentPage,
           size: this.size
         });
-        const response = await axios.get(`/api/admin/nhan-vien/hien-thi-nhan-vien?${params}`
+        const response = await axios.get(`/api/nhan-vien/hien-thi-nhan-vien?${params}`
         );
         this.nhanviens = response.data.content;
         this.totalPages = response.data.page.totalPages;

@@ -31,7 +31,7 @@
                             <h6>{{ item.maAoDai }} - {{ item.tenAoDai }}</h6>
                             <small class="text-muted">{{ $t('cart.item.code') }} {{ item.maAoDaiChiTiet }}</small> <br>
                             <small>{{ $t('cart.item.classification', { color: item.tenMauSac, size: item.tenKichThuoc })
-                                }}</small>
+                            }}</small>
                             <br>
                             <div class="d-flex align-items-center">
                                 <small class="me-2">{{ $t('cart.item.quantity') }}</small>

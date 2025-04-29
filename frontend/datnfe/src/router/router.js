@@ -201,6 +201,11 @@ const routes = [
   },
   {
     path: '/admin',
+    redirect: '/admin/login',
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/admin/login',
     name: 'login',
     component: () => import('../components/login/login.vue'),
     props: true,
@@ -257,6 +262,7 @@ const normalizeRoles = (roles) => {
 
 router.beforeEach(async (to, from, next) => {
   const layout = to.meta.layout;
+
   if ((layout === 'customer' || layout === 'payment') && to.meta.requiresAuth) {
     const hasSession = !!sessionStorage.getItem('customerInfo');
     if (!hasSession && to.meta.requiresAuth) {

@@ -29,7 +29,7 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/admin/nhan-vien")
+@RequestMapping("/api/nhan-vien")
 public class nhanviencontroller {
   @Autowired
   private NhanVienRepo nhanvienRepo;

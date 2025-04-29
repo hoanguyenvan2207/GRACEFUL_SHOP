@@ -164,7 +164,7 @@ export default {
         this.nhanVien = JSON.parse(storedNhanVien);
         return;
       }
-      axios.get(`/api/admin/nhan-vien/update/${id}`)
+      axios.get(`/api/nhan-vien/update/${id}`)
         .then(response => {
           this.nhanVien = response.data;
           this.originalEmail = this.nhanVien.email;
@@ -174,7 +174,7 @@ export default {
         .catch(error => console.error("Lỗi khi lấy dữ liệu nhân viên:", error));
     },
     fetchVaiTros() {
-      axios.get('/api/admin/nhan-vien/show-vai-tro')
+      axios.get('/api/nhan-vien/show-vai-tro')
         .then(response => {
           this.vaiTros = response.data;
         })
@@ -206,16 +206,17 @@ export default {
         okText: 'Xác nhận',
         cancelText: 'Hủy',
         onOk: () => {
-          axios.put(`/api/admin/nhan-vien/update/${this.nhanVien.id}`, this.nhanVien)
+          axios.put(`/api/nhan-vien/update/${this.nhanVien.id}`, this.nhanVien)
             .then(() => {
-              notification.success({
-                message: 'Thành công!',
-                description: 'Thông tin nhân viên đã được cập nhật!'
-              });
               sessionStorage.setItem(`nhanVien_${this.nhanVien.id}`, JSON.stringify(this.nhanVien));
               setTimeout(() => {
                 this.$router.push('/nhan-vien/list');
+                notification.success({
+                  message: 'Thành công!',
+                  description: 'Thông tin nhân viên đã được cập nhật!'
+                });
               }, 3000);
+
             })
             .catch(error => {
               console.error("Lỗi khi cập nhật nhân viên:", error);
@@ -235,7 +236,7 @@ export default {
     //   if (Object.values(this.errors).some(error => error !== "")) {
     //     return;
     //   }
-    //       axios.put(`/api/admin/nhan-vien/update/${this.nhanVien.id}`, this.nhanVien)
+    //       axios.put(`/api/nhan-vien/update/${this.nhanVien.id}`, this.nhanVien)
     //         .then(() => {
     //           notification.success({
     //             message: 'Thành công!',

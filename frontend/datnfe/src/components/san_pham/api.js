@@ -114,7 +114,6 @@ export const filterSanPhams = async (params) => {
 };
 
 const instance = axios.create({
-    baseURL: "/api", // Thêm dòng này
     paramsSerializer: {
         indexes: null
     }

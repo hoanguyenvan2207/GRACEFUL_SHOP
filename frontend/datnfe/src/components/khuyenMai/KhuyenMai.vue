@@ -355,7 +355,7 @@
                 </div>
                 <span v-if="errors.thoiGianTrungLap" style="margin-left: 160px;" class="text-danger error-message">{{
                     errors.thoiGianTrungLap
-                    }}</span>
+                }}</span>
                 <div class="row">
                     <div class="col-md-6 my-3">
                         <label>Mô Tả</label>
@@ -379,7 +379,7 @@
                         </div>
                     </div>
                     <span v-if="errors.chonspct" class="text-danger">{{ errors.chonspct
-                        }}</span>
+                    }}</span>
                 </div>
                 <hr class="border-success custom-hr">
                 <div class="form-group">

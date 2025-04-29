@@ -316,16 +316,15 @@ public class BanHangOnlineController {
             hoaDonBHRepo.save(pendingOrder);
             pendingOrders.remove(txnRef);
             String callback = String.format(
-                    "http://localhost:5173/thanh-toan?success=true&orderId=%d",
+                    "https://graceful56.shop/thanh-toan?success=true&orderId=%d",
                     pendingOrder.getId()
             );
             response.sendRedirect(callback);
         } else {
             pendingOrders.remove(txnRef);
-            response.sendRedirect("http://localhost:5173/thanh-toan?success=false");
+            response.sendRedirect("https://graceful56.shop/thanh-toan?success=false");
         }
     }
-
 
     // Endpoint IPN từ VNPay (server-to-server)
     @GetMapping("/vnpay_ipn")

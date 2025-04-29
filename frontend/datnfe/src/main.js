@@ -12,7 +12,6 @@ import i18n from './i18n';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import store from './router/store.js';
 
-
 const currentLayout = router.currentRoute.value.meta.layout;
 
 if (currentLayout === 'admin') {

@@ -19,7 +19,6 @@ export const getAllSanPhamChiTiets = async () => {
 };
 
 const instance = axios.create({
-    baseURL: "/api", // Thêm dòng này
     paramsSerializer: {
         indexes: null
     }
@@ -46,55 +45,6 @@ export const getSanPhamChiTietBySanPhamId = async (aoDaiId) => {
         return handleError(error);
     }
 };
-
-
-// Lấy danh sách sản phẩm đang hoạt động (page enabled)
-// export const getSanPhamChiTietsEnPage = async (keyword = "", page = 0, size = 5) => {
-//     try {
-//         const response = await axios.get(`${API_URL}/page/enables`, {
-//             params: {
-//                 keyword,
-//                 page,
-//                 size,
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         return handleError(error);
-//     }
-// };
-
-// Lấy danh sách sản phẩm đang hoạt động (page enabled)
-// export const getSanPhamChiTietsDisPage = async (keyword = "", page = 0, size = 5) => {
-//     try {
-//         const response = await axios.get(`${API_URL}/page/disables`, {
-//             params: {
-//                 keyword,
-//                 page,
-//                 size,
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         return handleError(error);
-//     }
-// };
-
-// Lấy danh sách sản phẩm theo trang và từ khóa tìm kiếm
-// export const getSanPhamChiTiets = async (keyword = "", page = 0, size = 5) => {
-//     try {
-//         const response = await axios.get(`${API_URL}/page/all`, {
-//             params: {
-//                 keyword,
-//                 page,
-//                 size,
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         return handleError(error);
-//     }
-// };
 
 // Thêm sản phẩm mới
 export const addSanPhamChiTiet = async (sanPhamChiTiet) => {

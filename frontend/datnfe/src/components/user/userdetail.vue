@@ -264,7 +264,7 @@ export default {
       }
 
 
-      axios.put(`http://localhost:8080/admin/nhan-vien/cap-nhat-thong-tin/${this.user.idNhanVien}`, {
+      axios.put(`/api/nhan-vien/cap-nhat-thong-tin/${this.user.idNhanVien}`, {
         soDienThoai: this.user.soDienThoai,
         email: this.user.email,
         diaChi: this.user.diaChi
@@ -354,7 +354,7 @@ export default {
             this.user.password = "";
             this.user.confirmPassword = "";
             sessionStorage.clear();
-            this.$router.push("/dang-nhap");
+            this.$router.push("/admin");
           }
         })
       } catch (error) {

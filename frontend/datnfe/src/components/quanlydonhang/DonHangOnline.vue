@@ -133,7 +133,7 @@
                   <p><strong>Số lượng:</strong> {{ ct.soLuong }} </p>
                   <p v-if="ct.aoDaiChiTiet.giaGoc !== ct.giaBan"><strong>Giá gốc: </strong><del class="text-danger">{{
                     formatCurrency(ct.aoDaiChiTiet.giaGoc)
-                  }}</del></p>
+                      }}</del></p>
                   <p><strong>Đơn giá: </strong> {{ formatCurrency(ct.giaBan) }}</p>
                 </div>
               </div>

@@ -33,6 +33,7 @@
 <script setup>
 import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
+import axios from 'axios';
 
 const { t } = useI18n();
 const isOpen = ref(false);
@@ -118,14 +119,11 @@ const sendMessage = async () => {
 
     // Gửi request đến API Spring Boot (Sử dụng /api/advisor/consult để tư vấn sản phẩm)
     try {
-        const response = await fetch('/api/advisor/consult', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: questions.value }),
-        });
+        const response = await axios.post('/api/advisor/consult', {
+            query: questions.value
+        })
 
-        const data = await response.json();
-        const reply = data.advice;
+        const reply = response.data.advice
 
         // Ẩn hiệu ứng "Gemini đang nhập..." và hiển thị phản hồi từ Gemini
         isTyping.value = false;
@@ -133,6 +131,8 @@ const sendMessage = async () => {
         scrollToBottom();
     } catch (error) {
         isTyping.value = false;
+        console.log(error);
+
         messages.value.push({ sender: 'gemini', text: 'Có lỗi xảy ra, vui lòng thử lại.' });
     }
 };

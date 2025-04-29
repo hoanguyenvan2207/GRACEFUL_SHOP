@@ -17,8 +17,12 @@ import axios from 'axios';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
+import.meta.env.VITE_API_URL
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL
+axios.defaults.withCredentials = true
+
+const router = useRouter();
 const route = useRoute();
 
 const layoutComponent = computed(() => {
@@ -34,9 +38,6 @@ const layoutComponent = computed(() => {
   }
   return Layout;
 });
-
-axios.defaults.baseURL = '/api';
-axios.defaults.withCredentials = true;
 
 function checkAuth() {
   axios.get('/api/auth/check', { withCredentials: true })

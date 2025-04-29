@@ -30,7 +30,7 @@ public class ForgotPasswordController {
         }
         String token = UUID.randomUUID().toString();
         ResetTokenStore.put(token, new ResetToken(email, System.currentTimeMillis() + 15 * 60 * 1000));
-        String resetUrl = "http://localhost:5173/reset-password?token=" + token;
+        String resetUrl = "https://graceful56.shop/reset-password?token=" + token;
         forgotPasswordService.sendForgotPasswordEmail(email, resetUrl);
 
         return ResponseEntity.ok("Yêu cầu đặt lại mật khẩu đã được gửi đến email của bạn.");

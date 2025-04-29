@@ -71,7 +71,6 @@
 <script>
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
-axios.defaults.baseURL = "http://localhost:8080";
 import {
   Modal,
   Input,

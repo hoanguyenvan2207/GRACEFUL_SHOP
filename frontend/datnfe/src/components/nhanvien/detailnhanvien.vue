@@ -128,7 +128,7 @@ export default {
             this.loading = true;
             this.error = null;
             try {
-                const response = await axios.get(`/api/admin/nhan-vien/details/${this.employeeId}`);
+                const response = await axios.get(`/api/nhan-vien/details/${this.employeeId}`);
                 this.nhanVien2 = response.data;
             } catch (error) {
                 console.error('Error fetching employee details:', error);
@@ -139,7 +139,7 @@ export default {
 
         },
         fetchVaiTros() {
-            axios.get('/api/admin/nhan-vien/show-vai-tro')
+            axios.get('/api/nhan-vien/show-vai-tro')
                 .then(response => this.vaiTros = response.data)
                 .catch(error => console.error(error));
         }

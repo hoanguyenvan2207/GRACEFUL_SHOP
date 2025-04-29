@@ -13,8 +13,9 @@
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const savedUser = sessionStorage.getItem('user')
 function goBack() {
-  if (window.history.length > 1) {
+  if (window.history.length > 1 && savedUser) {
     router.back()
   } else {
     router.push('/admin')
