@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1. Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -39,7 +39,7 @@ jobs:
           npm ci
           npm run build
 
-      # 4. List artifacts để debug
+      # 4. Debug list artifacts
       - name: List build artifacts
         run: |
           echo "== Backend JAR =="
@@ -47,22 +47,22 @@ jobs:
           echo "== Frontend dist =="
           ls -lha frontend/datnfe/dist
 
-      # 5. Copy artifacts to VM
-      - name: Copy artifacts to VM
+      # 5. Copy vào thư mục GRACEFUL_SHOP
+      - name: Copy artifacts to GRACEFUL_SHOP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # gom 2 nguồn, giữ nguyên folder structure
           source: "backend/DATN_BE/target/*.jar,frontend/datnfe/dist/*"
-          strip_components: 2
+          target: /home/${{ secrets.VM_USER }}/GRACEFUL_SHOP
           overwrite: true
           debug: true
-          target: /home/${{ secrets.VM_USER }}/deploy
 
-      # 6. SSH into VM & deploy
-      - name: SSH & Deploy on VM
+      # 6. SSH & restart
+      - name: SSH & Restart services
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
@@ -72,16 +72,17 @@ jobs:
           script: |
             set -e
 
-            echo "=== DEBUG: nội dung /deploy trên VM ==="
-            ls -R /home/${{ secrets.VM_USER }}/deploy/
+            echo "=== DEBUG: xem ~/GRACEFUL_SHOP ==="
+            ls -R /home/${{ secrets.VM_USER }}/GRACEFUL_SHOP
 
-            echo "=== DEPLOY BACKEND ==="
-            sudo mv /home/${{ secrets.VM_USER }}/deploy/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
-            sudo systemctl restart graceful-backend
+            echo "=== RESTART BACKEND ==="
+            # đảm bảo service trỏ đến:
+            # /home/.../GRACEFUL_SHOP/backend/DATN_BE/target/*.jar
+            sudo systemctl daemon-reload
+            sudo systemctl restart graceful-backend.service
 
-            echo "=== DEPLOY FRONTEND ==="
-            sudo rm -rf /var/www/html/*
-            sudo cp -r /home/${{ secrets.VM_USER }}/deploy/dist/* /var/www/html/
+            echo "=== RELOAD NGINX ==="
+            sudo nginx -t
             sudo systemctl reload nginx
 
             echo "🎉 Deployment complete!"
