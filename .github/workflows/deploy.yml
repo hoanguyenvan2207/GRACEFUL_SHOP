@@ -7,16 +7,58 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+
     steps:
-      # 1. Checkout repository
-      - name: Checkout code
+      # 1. Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2. Deploy via SSH to your VM
+      # 2. Build Backend with Maven
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build Spring Boot JAR
+        run: |
+          cd backend/DATN_BE
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+        # kết quả: backend/DATN_BE/target/*.jar
+
+      # 3. Build Frontend with Node.js
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install & Build Vue Frontend
+        run: |
+          cd frontend/datnfe
+          npm ci
+          npm run build
+        # kết quả: frontend/datnfe/dist/**
+
+      # 4. Copy artifacts to VM
+      - name: Copy artifacts to VM
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          port: ${{ secrets.VM_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: |
+            backend/DATN_BE/target/*.jar
+            frontend/datnfe/dist/**
+          target: /home/${{ secrets.VM_USER }}
+
+      # 5. SSH into VM and deploy
       - name: SSH & Deploy on VM
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -27,27 +69,15 @@ jobs:
           script: |
             set -e
 
-            echo "=== BACKEND ==="
-            cd ~/GRACEFUL_SHOP/backend/DATN_BE
-            git pull origin main
-
-            chmod +x mvnw
-            ./mvnw clean package -DskipTests
+            echo "=== DEPLOY BACKEND ==="
+            # move JAR and restart service
+            sudo mv /home/${{ secrets.VM_USER }}/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
-            echo "=== FRONTEND ==="
-            cd ~/GRACEFUL_SHOP/frontend/datnfe
-            # Install Node.js & npm (once)
-            sudo apt-get update
-            sudo apt-get install -y nodejs npm
-
-            git pull origin main
-            npm ci
-            npm run build
-
-            echo "Copy frontend to Nginx"
+            echo "=== DEPLOY FRONTEND ==="
+            # copy static files to nginx
             sudo rm -rf /var/www/html/*
-            sudo cp -r dist/* /var/www/html/
+            sudo cp -r /home/${{ secrets.VM_USER }}/dist/* /var/www/html/
             sudo systemctl reload nginx
 
-            echo "🎉 Deploy finished!"
+            echo "🎉 Deployment complete!"
