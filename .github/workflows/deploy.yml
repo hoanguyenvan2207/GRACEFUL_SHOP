@@ -40,7 +40,7 @@ jobs:
           npm ci
           npm run build
 
-      # 4. Debug workspace to see where files are
+      # 4. Debug workspace to verify paths
       - name: Debug workspace for scp
         run: |
           echo "----- ROOT -----"
@@ -50,7 +50,7 @@ jobs:
           echo "----- frontend/datnfe/dist -----"
           ls -l frontend/datnfe/dist
 
-      # 5. Copy artifacts to VM
+      # 5. Copy artifacts to VM (upload entire directories)
       - name: Copy artifacts to VM
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -58,9 +58,10 @@ jobs:
           username: ${{ secrets.VM_USER }}
           port: ${{ secrets.VM_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Chỉ định 2 thư mục, scp-action sẽ tar nguyên thư mục
           source: |
-            backend/DATN_BE/target/*.jar
-            frontend/datnfe/dist/**
+            backend/DATN_BE/target
+            frontend/datnfe/dist
           target: /home/${{ secrets.VM_USER }}/
 
       # 6. SSH into VM & deploy
@@ -73,11 +74,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
+
             echo "=== DEPLOY BACKEND ==="
-            sudo mv /home/${{ secrets.VM_USER }}/*.jar /home/${{ secrets.VM_USER }}/app.jar
+            # Di chuyển JAR đã upload và restart service
+            sudo mv /home/${{ secrets.VM_USER }}/target/*.jar /home/${{ secrets.VM_USER }}/app.jar
             sudo systemctl restart graceful-backend
 
             echo "=== DEPLOY FRONTEND ==="
+            # Copy thư mục dist mới lên nginx và reload
             sudo rm -rf /var/www/html/*
             sudo cp -r /home/${{ secrets.VM_USER }}/dist/* /var/www/html/
             sudo systemctl reload nginx
