@@ -1,21 +1,46 @@
-name: Pull, Build & Deploy on VM
-  uses: appleboy/ssh-action@v0.1.8
-  with:
-    host: ${{ secrets.VM_HOST }}
-    username: ${{ secrets.VM_USER }}
-    port: ${{ secrets.VM_PORT }}
-    key: ${{ secrets.SSH_PRIVATE_KEY }}
-    script: |
-      set -e
-      cd ~/DATN_Graceful/backend/DATN_BE
-      git pull origin main
-      chmod +x mvnw
-      ./mvnw clean package -DskipTests
-      sudo systemctl restart graceful-backend
-      cd ~/DATN_Graceful/frontend/datnfe
-      git pull origin main
-      npm ci
-      npm run build
-      sudo rm -rf /var/www/html/*
-      sudo cp -r dist/* /var/www/html/
-      echo "🎉 Deploy finished!"
+name: CI/CD Deploy to VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Pull, Build & Deploy on VM via SSH
+      - name: Pull, Build & Deploy on VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          port: ${{ secrets.VM_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            echo "=== BACKEND ==="
+            cd ~/DATN_Graceful/backend/DATN_BE
+            git pull origin main
+            chmod +x mvnw
+            ./mvnw clean package -DskipTests
+            sudo systemctl restart graceful-backend
+
+            echo "=== FRONTEND ==="
+            cd ~/DATN_Graceful/frontend/datnfe
+            git pull origin main
+            npm ci
+            npm run build
+
+            echo "Copy frontend to Nginx"
+            sudo rm -rf /var/www/html/*
+            sudo cp -r dist/* /var/www/html/
+            echo "🎉 Deploy finished!"
