@@ -36,7 +36,7 @@ public class BanHangOnlineController {
     private static final String VNP_HashSecret = "8LKU9O0U39ES9OEC1YKZVR92CFBCETXQ";
     private static final String VNP_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     // URL trả về khi VNPay xử lý xong (điều chỉnh theo domain của bạn)
-    private static final String VNP_ReturnUrl = "https://graceful56.com/api/ban-hang-online/vnpay_return";
+    private static final String VNP_ReturnUrl = "https://graceful56.shop/api/ban-hang-online/vnpay_return";
 
     @Autowired
     AoDaiChiTietBHRepo aoDaiChiTietBHRepo;
