@@ -105,7 +105,7 @@ watch(isLoggedIn, (newValue) => {
 
       </div>
       <div class="col-4 text-center">
-        <a href="http://localhost:5173/">
+        <a href="/">
           <img style="width: 160px; height: auto;"
             src="https://res.cloudinary.com/defcm50t7/image/upload/v1740129073/logo_graceful_lpd32u.png" alt="Logo" />
         </a>
