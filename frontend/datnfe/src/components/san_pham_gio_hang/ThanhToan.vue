@@ -62,7 +62,7 @@
                 </div>
                 <div class="d-flex gap-1 align-items-center">
                   <h6 class="text-muted" v-if="item.giaGoc !== item.giaBan"><del>{{ formatCurrency(item.giaGoc)
-                  }}</del></h6>
+                      }}</del></h6>
                   <h6 class="text-danger">{{ formatCurrency(item.giaBan) }}</h6>
                 </div>
               </div>
@@ -936,7 +936,7 @@ onMounted(async () => {
           if (checkoutProducts.value && checkoutProducts.value.length > 0) {
             for (const item of checkoutProducts.value) {
               try {
-                await axios.delete(`/api/api/gio_hang/${item.id}`);
+                await axios.delete(`/api/gio_hang/${item.id}`);
               } catch (error) {
                 console.error("Error deleting cart item:", error);
               }
