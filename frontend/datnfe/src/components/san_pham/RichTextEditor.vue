@@ -3,17 +3,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import Quill from 'quill'
-import 'quill/dist/quill.snow.css'
+import { ref, onMounted, watch } from 'vue';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+import { uploadImages } from './api';
 
 const props = defineProps({
     value: String
-})
+});
 
-const emit = defineEmits(['update:value', 'blur', 'change'])
-const editor = ref(null)
-let quill = null
+const emit = defineEmits(['update:value', 'blur', 'change']);
+const editor = ref(null);
+let quill = null;
+
+const Delta = Quill.import('delta');
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -27,7 +30,7 @@ const toolbarOptions = [
     [{ 'size': ['small', false, 'large', 'huge'] }],
     ['link', 'image', 'video'],
     ['clean']
-]
+];
 
 onMounted(() => {
     quill = new Quill(editor.value, {
@@ -36,36 +39,119 @@ onMounted(() => {
         modules: {
             toolbar: toolbarOptions
         }
-    })
+    });
 
     if (props.value) {
-        quill.root.innerHTML = props.value
+        quill.root.innerHTML = props.value;
     }
 
     quill.on('text-change', () => {
-        let html = quill.root.innerHTML
-        const strippedHtml = html.replace(/<[^>]+>/g, '').trim()
+        let html = quill.root.innerHTML;
+        const strippedHtml = html.replace(/<[^>]+>/g, '').trim();
         if (strippedHtml === '') {
-            html = ''
+            html = '';
         }
-        emit('update:value', html)
-        emit('change', html) // Thêm dòng này để phát sự kiện change
-    })
+        emit('update:value', html);
+        emit('change', html);
+    });
 
     quill.on('blur', () => {
-        emit('blur')
-    })
-})
+        emit('blur');
+    });
+
+    const clipboard = quill.getModule('clipboard');
+    clipboard.addMatcher('img', function (node, delta) {
+        const loadingSrc = 'https://i.gifer.com/ZKZg.gif';
+        const loadingDelta = new Delta().insert({ image: loadingSrc });
+
+        const selection = quill.getSelection(true);
+        const index = selection ? selection.index : quill.getLength();
+        quill.updateContents(new Delta().retain(index).concat(loadingDelta), 'user');
+
+        // Thêm class loading ngay lập tức
+        setTimeout(() => {
+            const imgs = quill.root.querySelectorAll('img');
+            imgs.forEach(img => {
+                if (img.src === loadingSrc) {
+                    img.classList.add('loading-image');
+                    img.dataset.originalSrc = node.src; // Lưu URL gốc
+                }
+            });
+        });
+
+        uploadImageToCloudinary(node.src)
+            .then(url => {
+                const imgs = quill.root.querySelectorAll('img');
+                imgs.forEach(img => {
+                    if (img.src === loadingSrc) {
+                        // Tạo ảnh ẩn để load trước
+                        const tempImg = new Image();
+                        tempImg.onload = () => {
+                            // Khi ảnh thật đã load xong
+                            img.src = url;
+                            img.classList.remove('loading-image');
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            img.removeAttribute('data-original-src');
+                        };
+                        tempImg.src = url;
+                    }
+                });
+            })
+            .catch(err => {
+                console.error('Lỗi upload ảnh:', err);
+                // Khôi phục ảnh gốc nếu upload thất bại
+                const imgs = quill.root.querySelectorAll('img');
+                imgs.forEach(img => {
+                    if (img.src === loadingSrc && img.dataset.originalSrc) {
+                        img.src = img.dataset.originalSrc;
+                        img.classList.remove('loading-image');
+                    }
+                });
+            });
+
+        return new Delta();
+    });
+
+});
+
+const uploadImageToCloudinary = async (base64Src) => {
+    try {
+        const fileData = await fetch(base64Src);
+        const blob = await fileData.blob();
+        const cloudinaryUrl = await uploadImages(blob);
+        return cloudinaryUrl;
+    } catch (err) {
+        console.error('Lỗi upload ảnh lên Cloudinary:', err);
+        return null;
+    }
+};
 
 watch(() => props.value, (newValue) => {
     if (quill && newValue !== quill.root.innerHTML) {
-        quill.root.innerHTML = newValue
+        quill.root.innerHTML = newValue;
     }
-})
+});
 </script>
 
 <style>
 .ql-editor {
     min-height: 200px;
+}
+
+.loading-image {
+    width: 30px !important;
+    height: 30px !important;
+    display: block;
+    margin: 10px auto;
+    opacity: 0.7;
+}
+
+.ql-editor img {
+    max-width: 50% !important;
+    height: auto !important;
+    display: block;
+    margin: 10px auto;
+    transition: all 0.4s ease;
 }
 </style>

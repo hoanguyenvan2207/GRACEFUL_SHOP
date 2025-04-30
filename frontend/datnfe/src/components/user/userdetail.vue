@@ -152,9 +152,6 @@
 <script>
 import axios from "axios";
 import { notification, Modal, Switch } from 'ant-design-vue';
-axios.defaults.baseURL = "http://localhost:8080";
-
-
 
 
 export default {

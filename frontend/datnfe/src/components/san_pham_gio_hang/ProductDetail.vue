@@ -138,7 +138,7 @@
             <h3 class="mt-5">{{ $t('product.video') }}</h3>
             <hr />
             <div v-if="youtubeEmbedUrl" class="text-center">
-                <iframe width="1000px" height="562px" :src="youtubeEmbedUrl" frameborder="0"
+                <iframe width="80%" height="583vh" :src="youtubeEmbedUrl" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>
             </div>
@@ -520,9 +520,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 :deep(.product-description img) {
-    max-width: 100%;
+    max-width: 50%;
     height: auto;
-    width: 700px;
     display: block;
     margin: 10px auto;
     border-radius: 8px;

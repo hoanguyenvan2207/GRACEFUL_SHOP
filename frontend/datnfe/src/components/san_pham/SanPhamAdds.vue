@@ -429,6 +429,7 @@ const handleSaveAndShow = async () => {
         handleSubmit();
     } catch (error) {
         console.log("Validation failed", error);
+        message.error('Vui lòng nhập đầy đủ các trường thông tin');
     }
 };
 
@@ -439,6 +440,7 @@ const handleSaveAndHide = async () => {
         handleSubmit();
     } catch (error) {
         console.log("Validation failed", error);
+        message.error('Vui lòng nhập đầy đủ các trường thông tin');
     }
 };
 
@@ -624,9 +626,9 @@ const handleSubmit = async () => {
                             'nhaCungCapId',
                             'anhList',
                         ]);
-                        message.error('Vui lòng kiểm tra lại thông tin sản phẩm!');
                     } catch (validateError) {
                         console.error('Lỗi validate:', validateError);
+                        message.error('Vui lòng kiểm tra lại thông tin sản phẩm!');
                     }
                 } else {
                     // Hiển thị thông báo lỗi chung

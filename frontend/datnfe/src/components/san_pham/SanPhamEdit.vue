@@ -314,7 +314,7 @@ const rules = {
     linkYoutube: [
         {
             validator: async (_, value) => {
-                if (value && !/^https?:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+$/.test(value)) {
+                if (value && !/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(value)) {
                     return Promise.reject('Link YouTube không hợp lệ!');
                 }
                 if (formErrors.value.linkYoutube) {
@@ -605,7 +605,7 @@ const handleSubmit = async () => {
                     }
                 } else {
                     // Hiển thị thông báo lỗi chung
-                    message.error(error.message || 'Thêm sản phẩm thất bại');
+                    message.error(error.message || 'Cập nhật sản phẩm thất bại');
                 }
             } finally {
                 loading.value = false;

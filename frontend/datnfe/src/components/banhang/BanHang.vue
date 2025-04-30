@@ -267,7 +267,7 @@
 <script>
 import axios from "axios";
 import jsQR from "jsqr";
-import { notification, Modal } from "ant-design-vue";
+import { notification, Modal, Spin, message } from "ant-design-vue";
 import { h } from "vue";
 
 export default {
@@ -675,7 +675,7 @@ export default {
       if (!this.activeTab) {
         notification.error({
           message: "Lỗi",
-          description: "Vui lòng chọn hóa đơn trước khi thêm sản phẩm.",
+          description: "Chưa chọn hóa đơn.",
         });
         return;
       }
@@ -775,13 +775,18 @@ export default {
     async processThanhToan() {
       const hoaDonThanhToan = {
         id: this.activeTab,
-        phuongThucThanhToan: this.selectedPaymentMethod === "1", // true for bank transfer
-        giamGia: this.selectedGiamGiaId
-          ? { id: Number(this.selectedGiamGiaId) }
-          : null,
+        phuongThucThanhToan: this.selectedPaymentMethod === "1",
+        giamGia: this.selectedGiamGiaId ? { id: Number(this.selectedGiamGiaId) } : null,
         khachHang: { soDienThoai: this.soDienThoai },
         nhanVien: { id: Number(sessionStorage.getItem("idNhanVien")) },
       };
+
+      // Hiển thị modal ngay lập tức với QR tạm thời
+      const qrModal = this.showQRCodeModal(
+        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1ZjVmNSIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNjY2MiPkxvYWRpbmcgUVIgQ29kZTwvdGV4dD48L3N2Zz4=",
+        this.tongTien,
+        "Đang tạo..."
+      );
 
       try {
         const response = await axios.post(
@@ -789,16 +794,16 @@ export default {
           hoaDonThanhToan
         );
 
-        // Check if response contains QR code
         if (response.data.qrCode) {
-          // For bank transfer, show QR modal with the generated QR
-          this.showQRCodeModal(
+          // Cập nhật modal với QR thật và dữ liệu mới
+          this.updateQRModal(
+            qrModal,
             response.data.qrCode,
             response.data.tongTien,
             response.data.txnRef
           );
         } else {
-          // For cash payment
+          qrModal.destroy();
           notification.success({
             message: "Thành công!",
             description: response.data,
@@ -806,67 +811,126 @@ export default {
           this.resetForm();
         }
       } catch (error) {
-        if (error.response && error.response.data) {
+        qrModal.destroy();
+        if (error.response?.data) {
           notification.error({ message: "Lỗi", description: error.response.data });
         }
       }
     },
-    // New method to show QR code modal
+
     showQRCodeModal(qrCodeBase64, amount, txnRef) {
-      Modal.confirm({
+      // Sử dụng biến tham chiếu để cập nhật giá trị
+      const modalData = {
+        qrCodeBase64,
+        amount,
+        txnRef,
+        confirmedAmount: amount // Lưu trữ số tiền để sử dụng khi xác nhận
+      };
+
+      const modal = Modal.confirm({
         title: "Thanh toán chuyển khoản",
-        width: 420, // độ rộng của cả modal
-        content: () =>
-          h(
-            "div",
-            {
-              style: {
-                display: "flex",          // bật flexbox
-                flexDirection: "column",  // xếp con theo cột
-                alignItems: "center",     // canh giữa ngang
-                justifyContent: "center", // canh giữa dọc (nếu muốn)
-                paddingRight: "30px",
-              },
-            },
-            h(
-              "p",
-              { style: { margin: "8px 0 0" } },
-              "Vui lòng quét mã QR để thanh toán."
-            ),
-            [
-              h("img", {
-                src: qrCodeBase64,
-                alt: "QR Code",
-                style: {
-                  maxWidth: "350px",
-                  width: "auto",
-                  marginBottom: "16px",
-                },
-              }),
-            ]
-          ),
+        width: 370,
+        content: () => this.renderQRModalContent(modalData, true),
         okText: "Đã thanh toán",
         cancelText: "Hủy",
         onOk: async () => {
-          // Call API to confirm payment
           try {
             await axios.post("/api/ban-hang/xac-nhan-thanh-toan", {
               id: this.activeTab
             });
             notification.success({
               message: "Thành công!",
-              description: `Thanh toán chuyển khoản thành công. Tổng tiền cuối cùng: ${amount?.toLocaleString("vi-VN")} VND`,
+              description: `Thanh toán chuyển khoản thành công. Tổng tiền: ${modalData.confirmedAmount?.toLocaleString("vi-VN") || '0'
+                } VND`,
             });
             this.resetForm();
           } catch (error) {
-            console.error("Lỗi xác nhận thanh toán:", error);
             notification.error({
               message: "Lỗi",
               description: error.response?.data || "Không thể xác nhận thanh toán",
             });
+            return Promise.reject();
           }
         },
       });
+
+      // Lưu reference để cập nhật sau
+      modal._modalData = modalData;
+      return modal;
+    },
+
+    updateQRModal(modal, qrCodeBase64, amount, txnRef) {
+      // Cập nhật cả dữ liệu modal và số tiền xác nhận
+      modal._modalData.qrCodeBase64 = qrCodeBase64;
+      modal._modalData.amount = amount;
+      modal._modalData.txnRef = txnRef;
+      modal._modalData.confirmedAmount = amount; // Quan trọng: cập nhật số tiền cho xác nhận
+
+      modal.update({
+        content: () => this.renderQRModalContent(modal._modalData, false)
+      });
+    },
+
+    renderQRModalContent(modalData, isLoading) {
+      const { qrCodeBase64, amount, txnRef } = modalData;
+      return h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingRight: "30px",
+          },
+        },
+        [
+          h(
+            "p",
+            { style: { margin: "8px 0 0" } },
+            isLoading ? "Đang tạo mã QR..." : "Vui lòng quét mã QR để thanh toán."
+          ),
+          h("div", {
+            style: {
+              position: "relative",
+              width: "350px",
+              height: "350px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "16px",
+            }
+          }, [
+            h("img", {
+              src: qrCodeBase64,
+              alt: "QR Code",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                opacity: isLoading ? 0.7 : 1,
+                filter: isLoading ? "blur(2px)" : "none",
+                transition: "all 0.3s ease",
+              },
+            }),
+            isLoading && h("div", {
+              style: {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }
+            }, [
+              h(Spin, { size: "large" })
+            ])
+          ]),
+          h("p", { style: { margin: "8px 0" } }, `Mã giao dịch: ${txnRef || 'Đang tạo...'}`),
+        ]
+      );
     },
 
     resetForm() {
@@ -1076,6 +1140,11 @@ export default {
     this.fetchDanhSachGiamGia();
     this.hoVaTen = sessionStorage.getItem("hoVaTen");
   },
+  watch: {
+    activeTab() {
+      this.getHoaDonChiTiet(this.activeTab);
+    },
+  }
 };
 </script>
 

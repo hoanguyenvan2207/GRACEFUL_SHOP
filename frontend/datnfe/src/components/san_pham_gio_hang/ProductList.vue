@@ -4,8 +4,8 @@
     <div class="container">
       <div class="row mt-5">
         <!-- Bộ lọc -->
-        <div class="col-2">
-          <div class="card w-100 shadow" style="margin-top: 24%;">
+        <div class="col-12 col-md-3 col-lg-2">
+          <div class="card w-100 shadow mt-md-5 mt-3">
             <div class="card-header">
               <i class="bi bi-funnel">{{ $t('filter.title') }}</i>
             </div>
@@ -68,18 +68,18 @@
           </button>
         </div>
         <!-- Danh sách sản phẩm -->
-        <div class="col-10">
+        <div class="col-12 col-md-9 col-lg-10">
           <div class="row">
             <!-- Tìm kiếm -->
-            <div class="col-12 d-flex justify-content-between align-items-center">
-              <h6 class="fw-bold col-3 text-dark text-muted mb-0">{{ $t('products.title') }}</h6>
-              <div class="col-4">
+            <div class="col-12 d-flex flex-wrap gap-2 align-items-center mb-3">
+              <h6 class="fw-bold text-dark text-muted mb-0 flex-grow-1">{{ $t('products.title') }}</h6>
+              <div class="flex-grow-1" style="min-width: 200px;">
                 <a-input :placeholder="$t('products.search')" v-model:value="filterParams.keyword"
                   @input="handleFilterChange" class="rounded-pill" style="width: 100%;" />
               </div>
               <!-- Sắp xếp -->
-              <div class="col-3 d-flex justify-content-center align-items-center">
-                <label class="form-label mt-1" style="width: 100px;">{{ $t('products.sort.label')
+              <div class="d-flex align-items-center gap-2 flex-grow-1">
+                <label class="form-label mb-0" style="width: 100px;">{{ $t('products.sort.label')
                 }}</label>
                 <a-select v-model:value="sortBy" @change="handleSortChange" class="rounded-pill-select"
                   :placeholder="$t('products.sort.default')" style="width: 100%;">
@@ -96,7 +96,7 @@
               </div>
             </div>
 
-            <div v-for="product in products" :key="product.id" class="col-12 col-md-4 col-lg-3 p-2 mb-4 rounded mt-2">
+            <div v-for="product in products" class="col-6 col-sm-4 col-md-4 col-lg-3 p-2 mb-4">
               <!-- Thêm sự kiện click vào toàn bộ card -->
               <div class="card h-100 product-items position-relative" style="cursor: pointer;"
                 @click="redirectTo(product.href)">
@@ -107,15 +107,15 @@
                   <i class="bi bi-eye hover-icon"></i>
                 </div>
                 <div class="card-body d-flex flex-column justify-content-between">
-                  <div class="row align-items-center p-0">
-                    <div class="d-flex justify-content-start text-warning col-7">
+                  <div class="d-flex justify-content-between align-items-center p-0">
+                    <div class="d-flex justify-content-start text-warning ">
                       <i class="bi bi-star-fill me-1"></i>
                       <i class="bi bi-star-fill me-1"></i>
                       <i class="bi bi-star-fill me-1"></i>
                       <i class="bi bi-star-fill me-1"></i>
                       <i class="bi bi-star-fill me-1"></i>
                     </div>
-                    <button class="btn btn-add rounded-pill col-3" @click.stop="addToCart(product)">
+                    <button class="btn btn-add rounded-pill" @click.stop="addToCart(product)">
                       <i class="fa-solid fa-cart-plus"></i>
                     </button>
                     <!-- <div class="text-danger col-2 text-end"><i class="bi bi-heart"></i></div> -->
@@ -526,7 +526,7 @@ onMounted(() => {
   z-index: 3;
   transition: transform 0.3s ease;
   font-weight: bold;
-  padding: 0;
+  padding: 0 20px;
   background-color: #f4c93b;
   color: white;
 }
@@ -636,5 +636,37 @@ onMounted(() => {
 
 .page-link.dots {
   cursor: default;
+}
+
+@media (max-width: 768px) {
+  .product-items .card-title {
+    font-size: 14px;
+  }
+
+  .product-items .btn-add {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+  }
+
+  .ant-select-selector {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-header {
+    font-size: 14px;
+  }
+
+  .ant-input-number,
+  .ant-select {
+    font-size: 14px !important;
+  }
+
+  .btn-clear-filters {
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }
 </style>

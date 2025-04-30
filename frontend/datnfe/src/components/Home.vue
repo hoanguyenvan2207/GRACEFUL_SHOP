@@ -2,13 +2,17 @@
     <Carousel />
     <div class="container">
         <!-- Container hiển thị top 5 sản phẩm trên 1 hàng -->
-        <div class="mt-5">
+        <div class="mt-5 px-3 px-md-5">
             <h6 class="fw-bold text-dark text-muted mb-0">{{ $t('home.title') }}</h6>
-            <div class="row row-cols-5 g-3 mt-1">
+            <div class="row g-3 mt-1
+            row-cols-2
+            row-cols-md-3
+            row-cols-lg-4
+            row-cols-xl-5">
                 <div v-for="product in products" :key="product.id" class="col">
                     <div class="card h-100 product-items position-relative" style="cursor: pointer;"
                         @click="redirectTo(product.href)">
-                        <div class="img-container" style="position: relative; aspect-ratio: 2/3; overflow: hidden;">
+                        <div class="img-container position-relative overflow-hidden" style="aspect-ratio: 2/3;">
                             <img :src="product.imageSrc || 'https://placehold.jp/800x1200.png'" :alt="product.tenAoDai"
                                 class="card-img-top img-fluid rounded h-100" style="object-fit: cover;">
                             <i class="bi bi-eye hover-icon"></i>
@@ -44,6 +48,7 @@
                 </div>
             </div>
         </div>
+
         <img class="w-100 h-100 mt-5" src="https://lamia.com.vn/storage/banner-sale/mega-sale-ao-dai-1920x15503.jpg"
             alt="Banner">
         <img class="w-100 h-100 mt-5"

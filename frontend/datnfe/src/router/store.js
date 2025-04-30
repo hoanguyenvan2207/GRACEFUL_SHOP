@@ -1,6 +1,5 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
-axios.defaults.baseURL = "/api";
 
 const savedUser = sessionStorage.getItem('user');
 const savedRoles = sessionStorage.getItem('roles');

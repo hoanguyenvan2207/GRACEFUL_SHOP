@@ -718,7 +718,7 @@ onMounted(() => {
 }
 
 :deep(.product-description img) {
-  max-width: 100%;
+  max-width: 50%;
   height: auto;
   width: 700px;
   display: block;
