@@ -548,16 +548,6 @@ const handleSubmit = async () => {
             try {
                 await formRef.value.validateFields();
 
-                for (let i = 0; i < formState.sanPhamChiTietList.length; i++) {
-                    const variant = formState.sanPhamChiTietList[i];
-                    if (!variant.giaGoc || !variant.soLuong) {
-                        throw new Error(`Biến thể thứ ${i + 1} chưa nhập đủ thông tin giá/số lượng`);
-                    }
-                    if (!variant.fileList?.[0]?.originFileObj) {
-                        throw new Error(`Biến thể thứ ${i + 1} chưa có ảnh`);
-                    }
-                }
-
                 if (uploadOption.value === 'upload') {
                     if (fileList.value.length === 0) {
                         throw new Error('Vui lòng tải lên ít nhất 1 ảnh sản phẩm chính');
@@ -572,20 +562,34 @@ const handleSubmit = async () => {
                     formState.anhList = mainImageUrls;
                 }
 
-                await Promise.all(
-                    formState.sanPhamChiTietList.map(async (variant, index) => {
-                        try {
-                            const file = variant.fileList?.[0]?.originFileObj;
-                            if (file) {
-                                const variantImageUrl = await uploadImages(file);
-                                variant.anhUrl = variantImageUrl;
-                            }
-                        } catch (error) {
-                            message.error(`Lỗi tải lên ảnh biến thể ${index + 1}`);
-                            throw error;
+                if (formState.sanPhamChiTietList.length !== 0) {
+                    for (let i = 0; i < formState.sanPhamChiTietList.length; i++) {
+                        const variant = formState.sanPhamChiTietList[i];
+                        if (!variant.giaGoc || !variant.soLuong) {
+                            throw new Error(`Biến thể thứ ${i + 1} chưa nhập đủ thông tin giá/số lượng`);
                         }
-                    })
-                );
+                        if (!variant.fileList?.[0]?.originFileObj) {
+                            throw new Error(`Biến thể thứ ${i + 1} chưa có ảnh`);
+                        }
+                    }
+                }
+
+                if (formState.sanPhamChiTietList.length !== 0) {
+                    await Promise.all(
+                        formState.sanPhamChiTietList.map(async (variant, index) => {
+                            try {
+                                const file = variant.fileList?.[0]?.originFileObj;
+                                if (file) {
+                                    const variantImageUrl = await uploadImages(file);
+                                    variant.anhUrl = variantImageUrl;
+                                }
+                            } catch (error) {
+                                message.error(`Lỗi tải lên ảnh biến thể ${index + 1}`);
+                                throw error;
+                            }
+                        })
+                    );
+                }
 
                 // Chuẩn bị dữ liệu gửi lên server
                 const payload = {
@@ -611,11 +615,11 @@ const handleSubmit = async () => {
                     router.push('/san-pham/list/all');
                 }
             } catch (error) {
-                // Xử lý lỗi từ backend
+
                 if (error.response?.data?.errors) {
                     formErrors.value = error.response.data.errors;
+
                     try {
-                        // Validate lại các trường bị lỗi
                         await formRef.value.validate([
                             'tenAoDai',
                             'moTa',
@@ -627,12 +631,15 @@ const handleSubmit = async () => {
                             'anhList',
                         ]);
                     } catch (validateError) {
-                        console.error('Lỗi validate:', validateError);
                         message.error('Vui lòng kiểm tra lại thông tin sản phẩm!');
                     }
+                } else if (error.response?.data?.message) {
+                    message.error(error.response.data.message);
+                } else if (error.message) {
+                    message.error(error.message);
                 } else {
-                    // Hiển thị thông báo lỗi chung
-                    message.error(error.message || 'Thêm sản phẩm thất bại');
+                    // Lỗi không xác định
+                    message.error('Thêm sản phẩm thất bại');
                 }
             } finally {
                 submitting.value = false;

@@ -11,12 +11,8 @@
       <div class="search-section">
         <div class="search-wrapper">
           <i class="bi bi-search search-icon"></i>
-          <input
-            v-model="searchTerm"
-            @keyup="handleSearch"
-            class="search-input"
-            placeholder="Tìm kiếm theo mã, tên, email, số điện thoại"
-          />
+          <input v-model="searchTerm" @keyup="handleSearch" class="search-input"
+            placeholder="Tìm kiếm theo mã, tên, email, số điện thoại" />
         </div>
       </div>
 
@@ -56,27 +52,19 @@
                 <td>{{ kh.ngayTao }}</td>
                 <td>
                   <div class="action-buttons">
-                    <button
-                      @click="editKhachHang(kh.id)"
-                      class="edit-btn"
-                      title="Chỉnh sửa"
-                    >
+                    <button @click="editKhachHang(kh.id)" class="edit-btn" title="Chỉnh sửa">
                       <i class="bi bi-pen"></i>
                     </button>
-                    <button
-                      @click="openDrawerForKhachHang(kh.id)"
-                      class="view-btn"
-                      title="Xem chi tiết"
-                    >
+                    <button @click="openDrawerForKhachHang(kh.id)" class="view-btn" title="Xem chi tiết">
                       <i class="bi bi-eye"></i>
                     </button>
                   </div>
                 </td>
               </tr>
-              
-            <tr v-if ="khachHangs.length === 0">
+
+              <tr v-if="khachHangs.length === 0">
                 <td colspan="10" class="text-center">Kết quả tìm kiếm "Không có"</td>
-            </tr>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -103,22 +91,18 @@
                   </template>
                 </span>
               </li>
-              <li
-                :class="[
-                  'page-item',
-                  { disabled: currentPage >= totalPages - 1 },
-                ]"
-              >
+              <li :class="[
+                'page-item',
+                { disabled: currentPage >= totalPages - 1 },
+              ]">
                 <button class="page-btn" @click="diToiTrangSau">
                   <i class="bi bi-chevron-right"></i>
                 </button>
               </li>
-              <li
-                :class="[
-                  'page-item',
-                  { disabled: currentPage >= totalPages - 1 },
-                ]"
-              >
+              <li :class="[
+                'page-item',
+                { disabled: currentPage >= totalPages - 1 },
+              ]">
                 <button class="page-btn" @click="diToiTrangCuoi">
                   <i class="bi bi-chevron-double-right"></i>
                 </button>
@@ -129,11 +113,7 @@
       </div>
     </div>
     <!-- Drawer Component -->
-    <KhachHangDrawer
-      :is-open="isDrawerOpen"
-      ref="khachHangDrawer"
-      @close="closeDrawer"
-    />
+    <KhachHangDrawer :is-open="isDrawerOpen" ref="khachHangDrawer" @close="closeDrawer" />
   </div>
 </template>
 
