@@ -31,7 +31,7 @@
                 <!-- Cột thông tin công ty -->
                 <div class="col-md-3 mb-4 mb-md-0">
                     <img src="https://res.cloudinary.com/defcm50t7/image/upload/v1740129073/logo_graceful_lpd32u.png"
-                        alt="Lamia logo" class="mb-4" width="200" height="auto">
+                        alt="Graceful logo" class="mb-4 p-0" width=200px height="auto" style="margin-left: -20px;">
                     <p class="fw-bold">{{ $t('footer.company.name') }}</p>
                     <p>{{ $t('footer.company.taxCode') }}</p>
                     <p>{{ $t('footer.company.phone') }}</p>

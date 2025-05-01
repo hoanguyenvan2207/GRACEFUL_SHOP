@@ -35,7 +35,7 @@ public class ChatGeminiService {
             List<Map<String, Object>> products = sanPhamService.getAllProducts();
             List<Map<String, Object>> topSellingProducts = sanPhamService.getTopProductsSale();
 
-            String topSellingProductsJson = objectMapper.writeValueAsString(products);
+            String topSellingProductsJson = objectMapper.writeValueAsString(topSellingProducts);
             String productsJson = objectMapper.writeValueAsString(products);
 
             String prompt = createProductAdvicePrompt(productsJson,topSellingProductsJson, customerQuery);

@@ -14,8 +14,8 @@
                 <div class="carousel-inner">
                     <div v-for="(img, index) in sliderImages" :key="index" class="carousel-item p-0"
                         :class="{ active: index === activeImageIndex }" :style="{ transition: 'opacity 0.5s ease' }">
-                        <img :src="img" class="d-block w-100 rounded"
-                            style="width: 500px; height: auto; object-fit: cover;" alt="Product Image" />
+                        <img @click="openImage(img)" :src="img" class="d-block w-100 rounded"
+                            style="width: auto; object-fit: cover; cursor: pointer;" alt="Product Image" />
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
@@ -223,6 +223,9 @@ const setActiveImageFromThumbnail = (imgUrl) => {
     startSliderTimer();
 };
 
+const openImage = (url) => {
+    window.open(url, '_blank');
+};
 
 const displayPriceIm = computed(() => {
     if (selectedVariant.value) return formatCurrency(selectedVariant.value.giaGoc);
@@ -520,7 +523,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 :deep(.product-description img) {
-    max-width: 50%;
+    max-width: 40%;
     height: auto;
     display: block;
     margin: 10px auto;

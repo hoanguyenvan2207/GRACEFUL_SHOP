@@ -153,7 +153,7 @@
                     <div class="col-7">
                         <li><strong>Mã SPCT:</strong> <span>{{ selectedItem.maAoDaiChiTiet }}</span></li>
                         <li><strong>Áo dài:</strong> <span>{{ selectedItem.tenAoDai }} ({{ selectedItem.maAoDai
-                                }})</span>
+                        }})</span>
                         </li>
                         <li><strong>Màu sắc:</strong> <span>{{ selectedItem.tenMauSac }}</span></li>
                         <li><strong>Kích thước:</strong> <span>{{ selectedItem.tenKichThuoc }}</span></li>

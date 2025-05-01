@@ -15,6 +15,7 @@
                         class="dot">.</span></strong>
             </div>
         </div>
+        Chọn trò chuyện hoặc tư vấn sản phẩm ở đây
         <div class="chat-input">
             <input v-model="userInput" type="text" ref="textInput" :placeholder="t('chat.chatbot.message')"
                 @keyup.enter="sendMessage" />

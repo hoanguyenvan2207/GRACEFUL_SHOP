@@ -420,7 +420,7 @@ const handleFileUpload = (event) => {
           }
         }
 
-        if (linkYoutube && !/^https?:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]+$/.test(linkYoutube.trim())) {
+        if (linkYoutube && !/^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}(\S*)?$/.test(linkYoutube.trim())) {
           errors.push(`Dòng ${rowIndex}: Link YouTube không hợp lệ.`);
         }
 
@@ -611,7 +611,7 @@ const handlePageSizeChange = (newSize) => {
 
 const columns = [
   { title: "#", dataIndex: "index", key: "index" },
-  { title: "Mã", dataIndex: "maAoDai", key: "maAoDai" },
+  { title: "Mã Áo Dài", dataIndex: "maAoDai", key: "maAoDai" },
   { title: "Tên Áo Dài", dataIndex: "tenAoDai", key: "tenAoDai", width: "25%" },
   { title: "Loại Áo Dài", dataIndex: "tenLoaiAoDai", key: "tenLoaiAoDai" },
   { title: "Chất Liệu", dataIndex: "tenChatLieu", key: "tenChatLieu" },
