@@ -2,7 +2,7 @@
     <Carousel />
     <div class="container">
         <!-- Container hiển thị top 5 sản phẩm trên 1 hàng -->
-        <div class="mt-5 px-3 px-md-5">
+        <div class="mt-5">
             <h6 class="fw-bold text-dark text-muted mb-0">{{ $t('home.title') }}</h6>
             <div class="row g-3 mt-1
             row-cols-2

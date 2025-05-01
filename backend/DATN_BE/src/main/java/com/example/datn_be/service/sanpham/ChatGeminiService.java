@@ -50,19 +50,23 @@ public class ChatGeminiService {
 
     private String createProductAdvicePrompt(String productsJson, String productTopsale, String customerQuery) {
         return "🌟 Chào mừng đến với Graceful! 🌟\n" +
-                "Bạn yêu quý ơi, hãy hóa thân thành một chuyên gia áo dài có tâm, có tầm, lại thêm chút hài hước tinh tế của Graceful nha! 😉\n\n" +
-                "Đây là kho tàng áo dài xinh xắn của chúng mình:\n" +
+                "Bạn yêu quý ơi, hãy hóa thân thành một chuyên gia áo dài có tâm – có tầm – lại hài hước, dễ thương kiểu 'Graceful' nha! 😉\n\n" +
+                "Dưới đây là danh sách các mẫu áo dài của nhà Graceful:\n" +
                 productsJson + "\n\n" +
-                "Top 5 'em' áo dài đang được 'săn đón' nhất tại Graceful:\n" +
+                "🔥 Top 5 mẫu 'cháy đơn' nhất:\n" +
                 productTopsale + "\n\n" +
-                "Khách hàng đang 'say nắng' chiếc áo dài có đặc điểm: \"" + customerQuery + "\"\n\n" +
-                "Với 'radar' thời trang siêu nhạy bén, hãy tư vấn cho khách những mẫu áo dài 'xinh lung linh', tập trung vào: <0xF0><0x9F><0x91><0xAB> <b>Kiểu dáng</b> (truyền thống, cách tân,...), ✨ <b>Chất liệu</b> (lụa, gấm, voan,...), và 💰 <b>Giá cả</b> (thật 'iu thương' nha!).\n" +
-                "Nhớ nha, thông tin 'ngắn mà chất' (dưới 300 ký tự) và 'show hàng' dưới dạng HTML liền mạch (không div, không table rườm rà!).\n" +
-                "🎁 Nếu Graceful đang có 'deal hời' nào (kiểm tra ngayBatDau, ngayKetThuc, trangThaiKhuyenMai), thì 'rủ rê' khách liền nha! Chỉ 'bật mí' khuyến mãi khi còn 'hoạt động' và trạng thái là 'true' thôi đó!\n" +
-                "💖 Gợi ý những 'bé' áo dài cụ thể với 🏷️ <b>Tên gọi</b>, 🎨 <b>Màu sắc</b>, và 📏 <b>Kích thước</b> có sẵn (trangThai = true). Ưu tiên 'new arrival' và 'best seller' để khách 'chốt đơn' liền tay!\n" +
-                "🚫 Tuyệt đối không dùng **, *, in đậm thông tin sản phẩm một cách 'cứng nhắc', mà hãy dùng icon 'cute phô mai que' và ngôn ngữ 'xì tin' để tư vấn thêm phần 'duyên dáng' nha! Hạn chế 'nhảy dòng' <br> quá nhiều nữa!\n\n" +
-                "💌 Graceful luôn ở đây để 'se duyên' cho bạn tìm được chiếc áo dài 'định mệnh' đó! Chúc bạn một ngày thật 'tươi như hoa' nhé! 🌸";
+                "Khách hàng đang quan tâm đến: \"" + customerQuery + "\" 💭\n\n" +
+                "Với con mắt fashion 'thần sầu', hãy gợi ý một vài mẫu phù hợp theo định dạng sau (tổng dưới 300 ký tự, trình bày HTML mượt mà, không div/table/** nha):\n\n" +
+                "✅ <b>Bố cục mô tả sản phẩm:</b>\n" +
+                "-🏷️ <b>Tên sản phẩm</b> – Mã sản phẩm, Chất liệu<br>, Loại áo dài <br>, Giá bán<br>\n\n" +
+                "-🎨 Màu sắc: – 📏 Kích thước còn hàng<br>\n" +
+                "-🖼️ Ảnh sản phẩm: 1–2 ảnh sản phẩm minh họa<br>\n" +
+                "-🔗 <a href=\"/san-pham/{id}\">Xem sản phẩm</a><br>\n" +
+                "✨ Ưu tiên gợi ý sản phẩm 'mới về' hoặc 'bán chạy'. Nếu có khuyến mãi đang hoạt động (ngayBatDau, ngayKetThuc, trangThaiKhuyenMai == true), thì khéo léo rủ rê khách nha!\n" +
+                "💖 Đừng quên giữ văn phong dễ thương, xì tin, thêm emoji để tăng 'duyên dáng'. Hạn chế dùng <br> quá nhiều dòng.\n\n" +
+                "💌 Graceful luôn đồng hành để bạn chọn được chiếc áo dài 'chân ái' của mình! 🌸";
     }
+
 
     private String callGeminiAPI(String prompt) {
         try {

@@ -90,19 +90,23 @@ import java.util.Optional;
                 Pageable pageable
         );
 
-    @Query(value = "SELECT TOP 5 s.*\n" +
-            "FROM ao_dai s\n" +
-            "LEFT JOIN (\n" +
-            "    SELECT sct.id_ao_dai, SUM(hdct.so_luong) AS totalSold\n" +
-            "    FROM ao_dai_chi_tiet sct\n" +
-            "    INNER JOIN hoa_don_chi_tiet hdct ON hdct.id_ao_dai_chi_tiet = sct.id\n" +
-            "    INNER JOIN hoa_don hd ON hdct.id_hoa_don = hd.id\n" +
-            "    WHERE hd.trang_thai IN (N'Đã thanh toán', N'Đã nhận hàng')\n" +
-            "    GROUP BY sct.id_ao_dai\n" +
-            ") AS sales ON sales.id_ao_dai = s.id\n" +
-            "ORDER BY COALESCE(sales.totalSold, 0) DESC",
-            nativeQuery = true)
+    @Query(value =
+            "SELECT TOP 5 s.* " +
+                    "FROM ao_dai s " +
+                    "LEFT JOIN ( " +
+                    "    SELECT sct.id_ao_dai, SUM(hdct.so_luong) AS totalSold " +
+                    "    FROM ao_dai_chi_tiet sct " +
+                    "    INNER JOIN hoa_don_chi_tiet hdct ON hdct.id_ao_dai_chi_tiet = sct.id " +
+                    "    INNER JOIN hoa_don hd ON hdct.id_hoa_don = hd.id " +
+                    "    WHERE hd.trang_thai IN (N'Đã thanh toán', N'Đã nhận hàng') " +
+                    "    GROUP BY sct.id_ao_dai " +
+                    ") sales ON sales.id_ao_dai = s.id " +
+                    "WHERE s.trang_thai = 1 " +
+                    "ORDER BY COALESCE(sales.totalSold, 0) DESC",
+            nativeQuery = true
+    )
     List<SanPham> findTopSellingProducts();
+
 
 
     boolean existsSanPhamByTenAoDai(String tenAoDai);

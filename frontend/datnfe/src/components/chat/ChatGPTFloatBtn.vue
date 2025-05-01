@@ -106,36 +106,34 @@ const toggleChat = () => {
 
 // Gửi tin nhắn đến API backend
 const sendMessage = async () => {
-    if (!userInput.value.trim()) return;
+    const text = userInput.value.trim();
+    if (!text) return;
 
-    messages.value.push({ sender: 'user', text: userInput.value });
+    // hiển thị tin nhắn của user
+    messages.value.push({ sender: 'user', text });
     scrollToBottom();
-
-    const questions = ref(userInput.value);
     userInput.value = '';
-
-    // Hiển thị trạng thái Gemini đang nhập
     isTyping.value = true;
 
-    // Gửi request đến API Spring Boot (Sử dụng /api/advisor/consult để tư vấn sản phẩm)
     try {
-        const response = await axios.post('/api/advisor/consult', {
-            query: questions.value
-        })
+        const res = await axios.post('/api/advisor/consult', { query: text });
+        if (res.data.advice.includes("Lỗi khi gọi API Gemini: 503 Service Unavailable on POST request for")) {
+            messages.value.push({ sender: 'gemini', text: 'Ối dồi ôi, em đang “bơi” trong cả tá yêu cầu 😵‍💫. Chờ em thở nhẹ một cái, rồi em tư vấn áo dài siêu xinh cho mình nha! 🌸' });
 
-        const reply = response.data.advice
-
-        // Ẩn hiệu ứng "Gemini đang nhập..." và hiển thị phản hồi từ Gemini
+        } else {
+            messages.value.push({ sender: 'gemini', text: res.data.advice });
+        }
+    } catch (err) {
         isTyping.value = false;
-        messages.value.push({ sender: 'gemini', text: reply });
-        scrollToBottom();
-    } catch (error) {
-        isTyping.value = false;
-        console.log(error);
+        console.log(err);
 
         messages.value.push({ sender: 'gemini', text: 'Có lỗi xảy ra, vui lòng thử lại.' });
     }
+
+    isTyping.value = false;
+    scrollToBottom();
 };
+
 
 const scrollToBottom = () => {
     nextTick(() => {

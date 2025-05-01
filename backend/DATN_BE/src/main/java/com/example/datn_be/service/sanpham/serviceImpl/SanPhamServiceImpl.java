@@ -186,7 +186,7 @@ public class SanPhamServiceImpl implements SanPhamService {
     public List<Map<String, Object>> getAllProducts() {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(
-                    "http://localhost:8080/api/san-pham/list/enables",
+                    "http://localhost:8080/api/san-pham/list/filter-products",
                     String.class);
 
             // Chuyển đổi response thành List<Map>
