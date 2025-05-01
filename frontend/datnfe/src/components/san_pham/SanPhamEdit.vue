@@ -540,6 +540,8 @@ const handleCancel = async () => {
     }
 };
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const handleSubmit = async () => {
     if (!(await hasFormChanged())) {
         router.push("/san-pham/list/all");
@@ -555,29 +557,32 @@ const handleSubmit = async () => {
             try {
                 await formRef.value.validate();
                 loading.value = true;
+
+                // 2. Tính anhList mới
                 let anhList = [...currentImages.value];
 
-                if (imageOption.value === "link" && form.value.anhList.length > 0) {
+                if (imageOption.value === "link" && form.value.anhList.length) {
                     anhList = [...currentImages.value, ...form.value.anhList];
                 }
-                if (imageOption.value === "upload" && uploadedFiles.value.length > 0) {
+
+                if (imageOption.value === "upload" && uploadedFiles.value.length) {
+                    // map mỗi file thành 1 promise upload + delay
                     const uploadPromises = uploadedFiles.value
                         .filter(f => f.originFileObj)
-                        .map(file => uploadImages(file.originFileObj));
+                        .map(async file => {
+                            const url = await uploadImages(file.originFileObj);
+                            // delay giữa các upload để tránh throttle
+                            await delay(500);
+                            return url;
+                        });
 
-                    const uploadResponse = [];
-                    for (const promise of uploadPromises) {
-                        const result = await promise;
-                        uploadResponse.push(result);
-                        await new Promise((resolve) => setTimeout(resolve, 500));
-                    }
-
+                    const uploadResponse = await Promise.all(uploadPromises);
                     anhList = [...currentImages.value, ...uploadResponse];
                 }
+
+                // 3. Gọi API, không cần setTimeout nữa
                 const data = { ...form.value, anhList };
                 await updateSanPham(route.params.id, data);
-
-                await new Promise(resolve => setTimeout(resolve, 1000));
 
                 notification.success({
                     message: "Thành công",
@@ -612,8 +617,6 @@ const handleSubmit = async () => {
             }
         },
         onCancel() {
-            fetchOptions();
-            fetchSanPham();
             message.info("Đã hủy thao tác cập nhật.");
         }
     });

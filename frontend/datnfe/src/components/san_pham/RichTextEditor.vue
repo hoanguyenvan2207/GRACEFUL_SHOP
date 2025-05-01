@@ -15,8 +15,7 @@ const props = defineProps({
 const emit = defineEmits(['update:value', 'blur', 'change']);
 const editor = ref(null);
 let quill = null;
-
-const Delta = Quill.import('delta');
+const LOADING_IMG_URL = 'https://i.gifer.com/ZKZg.gif';
 
 const toolbarOptions = {
     container: [
@@ -42,20 +41,29 @@ onMounted(() => {
         theme: 'snow',
         placeholder: 'Nhập mô tả...',
         modules: {
-            toolbar: toolbarOptions
+            toolbar: toolbarOptions,
+            clipboard: {
+                matchVisual: false // This helps with some paste issues
+            }
         }
     });
 
     if (props.value) {
         quill.root.innerHTML = props.value;
+        // Sau khi nạp nội dung ban đầu, kiểm tra và tải lên các ảnh base64 đã có
+        processExistingImages();
     }
 
     quill.on('text-change', () => {
+        // Đảm bảo không hiển thị placeholder khi có ảnh
         let html = quill.root.innerHTML;
+        const hasImage = html.includes('<img');
         const strippedHtml = html.replace(/<[^>]+>/g, '').trim();
-        if (strippedHtml === '') {
+
+        if (strippedHtml === '' && !hasImage) {
             html = '';
         }
+
         emit('update:value', html);
         emit('change', html);
     });
@@ -64,107 +72,252 @@ onMounted(() => {
         emit('blur');
     });
 
+    // Cải thiện xử lý paste
     const clipboard = quill.getModule('clipboard');
-    clipboard.addMatcher('img', (node, delta) => {
-        const src = node.src;
-        if (src.startsWith('data:') || src.startsWith('blob:')) {
-            const loadingSrc = 'https://i.gifer.com/ZKZg.gif';
-            const loadingDelta = new Delta().insert({ image: loadingSrc });
 
-            const selection = quill.getSelection(true);
-            const index = selection ? selection.index : quill.getLength();
-            quill.updateContents(new Delta().retain(index).concat(loadingDelta), 'user');
+    // Xử lý an toàn hơn cho paste
+    try {
+        // Xử lý ảnh
+        clipboard.addMatcher('img', (node, delta) => {
+            const src = node.getAttribute('src');
+            if (src && (src.startsWith('data:') || src.startsWith('blob:'))) {
+                // Ghi nhận và xử lý ảnh sau
+                setTimeout(() => processImageAfterPaste(src), 10);
+            }
+            return delta; // Đảm bảo luôn trả về delta
+        });
+    } catch (err) {
+        console.error('Error setting up clipboard matcher:', err);
+    }
 
-            // Thêm class loading ngay lập tức
-            setTimeout(() => {
-                const imgs = quill.root.querySelectorAll('img');
-                imgs.forEach(img => {
-                    if (img.src === loadingSrc) {
-                        img.classList.add('loading-image');
-                        img.dataset.originalSrc = node.src; // Lưu URL gốc
+    // Tách sự kiện paste khỏi matcher để xử lý riêng
+    quill.root.addEventListener('paste', handlePasteEvent);
+
+    // Theo dõi thay đổi từ props
+    watch(() => props.value, (newValue) => {
+        if (quill && newValue !== quill.root.innerHTML) {
+            quill.root.innerHTML = newValue;
+            processExistingImages();
+        }
+    });
+});
+
+// Improved paste event handler
+function handlePasteEvent(e) {
+    try {
+        // Let Quill handle the paste operation first
+        setTimeout(() => {
+            // Then process any pasted images
+            processPastedImages();
+        }, 100);
+    } catch (err) {
+        console.error('Error in paste handler:', err);
+    }
+}
+
+// Xử lý tất cả ảnh base64 sau khi paste
+function processPastedImages() {
+    try {
+        const images = quill.root.querySelectorAll('img');
+        images.forEach(img => {
+            const src = img.getAttribute('src');
+            if (src && (src.startsWith('data:') || src.startsWith('blob:'))) {
+                processImageAfterPaste(src, img);
+            }
+        });
+    } catch (err) {
+        console.error('Error processing pasted images:', err);
+    }
+}
+
+// Xử lý ảnh sau khi paste
+function processImageAfterPaste(src, imgElement = null) {
+    try {
+        // Nếu không có element cụ thể, tìm trong tất cả ảnh
+        if (!imgElement) {
+            const images = quill.root.querySelectorAll('img');
+            for (let img of images) {
+                if (img.src === src) {
+                    imgElement = img;
+                    break;
+                }
+            }
+            if (!imgElement) return; // Không tìm thấy ảnh
+        }
+
+        // Lưu trữ vị trí và thông tin ảnh
+        const originalSrc = imgElement.src;
+        const originalWidth = imgElement.style.width;
+        const originalHeight = imgElement.style.height;
+
+        // Thay thế bằng ảnh loading
+        imgElement.src = LOADING_IMG_URL;
+        imgElement.classList.add('loading-image');
+        imgElement.dataset.originalSrc = originalSrc;
+
+        // Upload ảnh lên cloud
+        uploadImageToCloud(originalSrc)
+            .then(url => {
+                // Tạo ảnh ẩn để load trước
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    if (imgElement.parentNode) { // Kiểm tra xem ảnh còn tồn tại không
+                        imgElement.src = url;
+                        imgElement.classList.remove('loading-image');
+                        imgElement.style.width = originalWidth || '100%';
+                        imgElement.style.height = originalHeight || 'auto';
+                        imgElement.removeAttribute('data-original-src');
                     }
-                });
+                };
+                tempImg.src = url;
+            })
+            .catch(err => {
+                console.error('Lỗi upload ảnh:', err);
+                // Giữ lại ảnh loading thay vì xóa, để đảm bảo có nội dung
+                if (imgElement.parentNode) {
+                    imgElement.src = LOADING_IMG_URL;
+                    imgElement.classList.add('error-image');
+                }
             });
+    } catch (err) {
+        console.error('Error processing image:', err);
+    }
+}
 
-            uploadImageToCloudinary(node.src)
-                .then(url => {
-                    const imgs = quill.root.querySelectorAll('img');
-                    imgs.forEach(img => {
-                        if (img.src === loadingSrc) {
+// Xử lý các hình ảnh hiện có trong nội dung
+function processExistingImages() {
+    setTimeout(() => {
+        try {
+            const images = quill.root.querySelectorAll('img');
+            images.forEach(img => {
+                const src = img.getAttribute('src');
+                if (src && (src.startsWith('data:') || src.startsWith('blob:'))) {
+                    const originalSrc = img.src;
+                    const originalStyle = img.getAttribute('style');
+
+                    // Đổi thành ảnh loading
+                    img.src = LOADING_IMG_URL;
+                    img.classList.add('loading-image');
+
+                    // Upload ảnh
+                    uploadImageToCloud(originalSrc)
+                        .then(url => {
                             // Tạo ảnh ẩn để load trước
                             const tempImg = new Image();
                             tempImg.onload = () => {
-                                // Khi ảnh thật đã load xong
-                                img.src = url;
-                                img.classList.remove('loading-image');
-                                img.style.width = '100%';
-                                img.style.height = 'auto';
-                                img.removeAttribute('data-original-src');
+                                if (img.parentNode) { // Kiểm tra xem ảnh còn tồn tại không
+                                    img.src = url;
+                                    img.classList.remove('loading-image');
+                                    if (originalStyle) {
+                                        img.setAttribute('style', originalStyle);
+                                    } else {
+                                        img.style.width = '100%';
+                                        img.style.height = 'auto';
+                                    }
+                                }
                             };
                             tempImg.src = url;
-                        }
-                    });
-                })
-                .catch(err => {
-                    console.error('Lỗi upload ảnh:', err);
-                    // Khôi phục ảnh gốc nếu upload thất bại
-                    const imgs = quill.root.querySelectorAll('img');
-                    imgs.forEach(img => {
-                        if (img.src === loadingSrc && img.dataset.originalSrc) {
-                            img.src = img.dataset.originalSrc;
-                            img.classList.remove('loading-image');
-                        }
-                    });
-                });
-        } else {
-            return new Delta().insert({ image: src });
+                        })
+                        .catch(err => {
+                            console.error('Lỗi upload ảnh:', err);
+                            // Giữ lại ảnh loading thay vì xóa, để đảm bảo có nội dung
+                            if (img.parentNode) {
+                                img.classList.add('error-image');
+                            }
+                        });
+                }
+            });
+        } catch (err) {
+            console.error('Error processing existing images:', err);
         }
+    }, 0);
+}
 
-        return new Delta();
-    });
-
-});
-
+// Xử lý khi người dùng chọn hình ảnh từ công cụ
 function imageHandler() {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
     input.click();
+
     input.onchange = async () => {
-        const file = input.files[0];
-        if (!file) return;
-        // cho hiển thị tạm loading (có thể dùng một URL gif hoặc insert text…)
-        const range = quill.getSelection(true);
-        quill.insertEmbed(range.index, 'image', 'https://i.gifer.com/ZKZg.gif');
         try {
-            const url = await uploadImages(file); // gọi API upload lên Cloudinary
-            // xóa loading
-            quill.deleteText(range.index, 1);
-            // chèn ảnh thật
-            quill.insertEmbed(range.index, 'image', url, 'user');
-            quill.setSelection(range.index + 1);
+            const file = input.files[0];
+            if (!file) return;
+
+            // Lưu vị trí hiện tại
+            const range = quill.getSelection(true);
+            const index = range ? range.index : quill.getLength();
+
+            // Hiển thị loading
+            quill.insertEmbed(index, 'image', LOADING_IMG_URL, 'user');
+
+            // Thêm class loading
+            setTimeout(() => {
+                const imgs = quill.root.querySelectorAll('img[src="' + LOADING_IMG_URL + '"]');
+                if (imgs.length > 0) {
+                    const lastImg = imgs[imgs.length - 1];
+                    lastImg.classList.add('loading-image');
+                }
+            }, 0);
+
+            // Upload trực tiếp lên cloud, không lưu base64
+            const url = await uploadImages(file);
+
+            // Cập nhật ảnh loading
+            const imgs = quill.root.querySelectorAll('img.loading-image');
+            if (imgs.length > 0) {
+                const lastImg = imgs[imgs.length - 1];
+
+                // Tạo ảnh ẩn để load trước
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    lastImg.src = url;
+                    lastImg.classList.remove('loading-image');
+                    lastImg.style.width = '100%';
+                    lastImg.style.height = 'auto';
+                };
+                tempImg.src = url;
+            }
+
+            quill.setSelection(index + 1);
         } catch (err) {
             console.error('Upload toolbar image thất bại', err);
-            // bạn có thể hiện thông báo lỗi, hoặc rollback
+
+            // Không xóa ảnh, chỉ đánh dấu lỗi để người dùng thử lại
+            const imgs = quill.root.querySelectorAll('img.loading-image');
+            if (imgs.length > 0) {
+                const lastImg = imgs[imgs.length - 1];
+                lastImg.classList.add('error-image');
+            }
         }
     };
 }
 
-const uploadImageToCloudinary = async (src) => {
-    if (/^https?:\/\//.test(src)) {
-        return src;
-    }
-    const fileData = await fetch(src);
-    const blob = await fileData.blob();
-    return await uploadImages(blob);
-};
+// Upload hình ảnh lên cloud
+async function uploadImageToCloud(src) {
+    try {
+        // Nếu đã là URL web (không phải base64/blob), trả về luôn
+        if (/^https?:\/\//.test(src) && !src.includes(location.origin) && !src.includes(LOADING_IMG_URL)) {
+            return src;
+        }
 
+        // Chuyển đổi data URL hoặc blob URL thành Blob
+        const fileData = await fetch(src);
+        const blob = await fileData.blob();
 
-watch(() => props.value, (newValue) => {
-    if (quill && newValue !== quill.root.innerHTML) {
-        quill.root.innerHTML = newValue;
+        // Kiểm tra kích thước và loại tập tin
+        if (blob.size > 0) {
+            // Gọi API upload
+            return await uploadImages(blob);
+        } else {
+            throw new Error('Không thể lấy dữ liệu hình ảnh');
+        }
+    } catch (error) {
+        console.error('Lỗi xử lý hình ảnh:', error);
+        throw error;
     }
-});
+}
 </script>
 
 <style>
@@ -180,11 +333,20 @@ watch(() => props.value, (newValue) => {
     opacity: 0.7;
 }
 
+.error-image {
+    border: 2px solid #ff4d4f;
+}
+
 .ql-editor img {
     max-width: 50% !important;
     height: auto !important;
     display: block;
     margin: 10px auto;
     transition: all 0.4s ease;
+}
+
+/* Đảm bảo trình soạn thảo không trống khi chỉ có hình ảnh */
+.ql-editor:has(img):not(:has(p:not(:empty))) {
+    min-height: 200px;
 }
 </style>

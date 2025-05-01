@@ -4,7 +4,7 @@
     <div class="container">
       <div class="row mt-5">
         <!-- Bộ lọc -->
-        <div class="col-12 col-md-3 col-lg-2 mt-1">
+        <div class="col-12 col-md-3 col-lg-2 mt-2">
           <div class="card w-100 shadow mt-md-5">
             <div class="card-header">
               <i class="bi bi-funnel">{{ $t('filter.title') }}</i>
