@@ -56,6 +56,8 @@ public class ChatGeminiService {
                                     Map<String, Object> s = new HashMap<>();
                                     s.put("tenMauSac",          spct.get("tenMauSac"));
                                     s.put("tenKichThuoc",       spct.get("tenKichThuoc"));
+                                     s.put("giaGoc",             spct.get("giaGoc"));
+                                    s.put("giaBan",             spct.get("giaBan"));
                                     s.put("maKhuyenMai",        spct.get("maKhuyenMai"));
                                     s.put("ngayBatDau",         spct.get("ngayBatDau"));
                                     s.put("ngayKetThuc",        spct.get("ngayKetThuc"));
