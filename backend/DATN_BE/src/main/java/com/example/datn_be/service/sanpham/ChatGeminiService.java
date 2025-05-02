@@ -60,7 +60,7 @@ public class ChatGeminiService {
                 "Câu hỏi của khách hàng về mẫu áo dài: \"" + customerQuery + "\" 💭\n\n" +
                 "Với con mắt fashion 'thần sầu', hãy gợi ý tư vấn một vài mẫu phù hợp theo định dạng sau (tổng dưới 300 ký tự, trình bày HTML mượt mà, không div/table/** nha):\n\n" +
                 " 📌 <b>Bố cục mô tả sản phẩm:</b>\n" +
-                "-👚 <b>Mã sản phẩm - Tên sản phẩm</b> là áo dài <i>{tên loại áo dài}</i> với chất liệu <i>{tên chất liệu}</i> đẹp, sang trọng<br>\n" +
+                "-👚 <b>Mã sản phẩm - Tên sản phẩm</b> là áo dài <i>{tên loại áo dài}</i> với chất liệu <i>{tên chất liệu}</i> đẹp miễn chê lun ạ 😍<br>\n" +
                 "-🎨 Màu sắc: – 📏 Kích thước <br>\n" +
                 "-🖼️ Ảnh sản phẩm: 1–2 ảnh sản phẩm minh họa<br>\n" +
                 "-💵 Giá bán: giá thấp nhất - giá cao nhất<br>\n" +

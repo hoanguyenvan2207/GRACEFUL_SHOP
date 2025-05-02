@@ -62,7 +62,7 @@
                 </div>
                 <div class="d-flex gap-1 align-items-center">
                   <h6 class="text-muted" v-if="item.giaGoc !== item.giaBan"><del>{{ formatCurrency(item.giaGoc)
-                      }}</del></h6>
+                  }}</del></h6>
                   <h6 class="text-danger">{{ formatCurrency(item.giaBan) }}</h6>
                 </div>
               </div>
@@ -209,7 +209,7 @@
               <p v-if="ct.aoDaiChiTiet.giaGoc !== ct.giaBan" class="me-1 text-muted">
                 <del class="me-">{{ formatCurrency(ct.aoDaiChiTiet.giaGoc) }}</del>
               </p>
-              <p class="fw-bold mb-0">{{ formatCurrency(ct.giaBan * ct.soLuong) }}</p>
+              <p class="fw-bold mb-0">{{ formatCurrency(ct.giaBan) }}</p>
             </div>
           </div>
 
