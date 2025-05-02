@@ -63,8 +63,10 @@ import Carousel from './Carousel.vue';
 import { getTopSell } from './san_pham/api';
 import { notification } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useCartStore } from "./san_pham_gio_hang/cart";
 
+const router = useRouter();
 const cartStore = useCartStore();
 const { t } = useI18n();
 const products = ref([]);

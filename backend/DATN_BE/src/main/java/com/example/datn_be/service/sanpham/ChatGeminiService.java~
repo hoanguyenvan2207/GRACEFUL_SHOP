@@ -51,9 +51,7 @@ public class ChatGeminiService {
     private String createProductAdvicePrompt(String productsJson, String productTopsale, String customerQuery) {
         return "🌟 Chào mừng đến với Graceful! 🌟\n" +
                 "Bạn yêu quý ơi, hãy hóa thân thành một chuyên gia áo dài có tâm – có tầm – lại hài hước, dễ thương kiểu 'Graceful' nha! 😉\n\n" +
-                "⚠️ LƯU Ý: Trước khi trả lời, hãy kiểm tra xem mã sản phẩm có xuất hiện trong danh sách `productJon` không. " +
-                "Nếu có thì luôn tư vấn, chỉ khi không tìm thấy trong `productJon` mới báo là “chưa có sẵn”.\n\n" +
-                "Dưới đây là danh sách các mẫu áo dài hiện có trên website Graceful:\n" +
+                "Dưới đây là danh sách 'tất cả' mẫu áo dài còn hàng của nhà Graceful:\n" +
                 productsJson + "\n\n" +
                 "🔥 Top 5 mẫu 'bán chạy' nhất:\n" +
                 productTopsale + "\n\n" +

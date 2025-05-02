@@ -12,7 +12,7 @@ import AdminLayout from './layouts/AdminLayout.vue';
 import CustomerLayout from './layouts/CustomerLayout.vue';
 import PaymentLayout from './components/san_pham_gio_hang/ThanhToan.vue';
 import Layout from './layouts/Layout.vue';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted } from 'vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
