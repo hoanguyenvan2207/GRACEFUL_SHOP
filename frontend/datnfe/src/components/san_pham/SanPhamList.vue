@@ -436,7 +436,7 @@ const handleFileUpload = (event) => {
           anhList.forEach((anh, index) => {
             if (!anh || anh.trim() === "") {
               errors.push(`Dòng ${rowIndex}: Hình ảnh ${index + 1} không được để trống.`);
-            } else if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/.test(anh.trim())) {
+            } else if (!/^(https?:\/\/)[\w-]+(\.[\w-]+)+\/[\w\-.,@?^=%&:/~+#]*\.(?:jpg|jpeg|png|gif)(?:\?.*)?$/i.test(anh.trim())) {
               errors.push(`Dòng ${rowIndex}: Hình ảnh ${index + 1} không hợp lệ.`);
             }
           });
