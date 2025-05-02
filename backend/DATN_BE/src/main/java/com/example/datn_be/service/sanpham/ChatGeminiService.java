@@ -42,6 +42,7 @@ public class ChatGeminiService {
             List<Map<String, Object>> minimalProducts = products.stream()
                     .map(prod -> {
                         Map<String, Object> m = new HashMap<>();
+                        m.put("id",      prod.get("id"));
                         m.put("maAoDai",      prod.get("maAoDai"));
                         m.put("tenAoDai",     prod.get("tenAoDai"));
                         m.put("tenChatLieu",  prod.get("tenChatLieu"));
@@ -72,6 +73,7 @@ public class ChatGeminiService {
             List<Map<String, Object>> minimalTopSelling = topSellingProducts.stream()
                     .map(prod -> {
                         Map<String, Object> m = new HashMap<>();
+                        m.put("id",           prod.get("id"));
                         m.put("maAoDai",      prod.get("maAoDai"));
                         m.put("tenAoDai",     prod.get("tenAoDai"));
                         m.put("tenChatLieu",  prod.get("tenChatLieu"));
