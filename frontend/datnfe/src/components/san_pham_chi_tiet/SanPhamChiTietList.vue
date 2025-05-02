@@ -595,7 +595,7 @@ const handleFileUpload = async (event) => {
 
                 // --- VALIDATE URL ẢNH ---
 
-                if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/.test(anhUrl)) {
+                if (!/^(https?:\/\/)[\w-]+(\.[\w-]+)+\/[\w\-.,@?^=%&:/~+#]*\.(?:jpg|jpeg|png|gif)(?:\?.*)?$/i.test(anhUrl)) {
                     errors.push(`Dòng ${rowIndex}: Link ảnh không hợp lệ`);
                     return null;
                 }
