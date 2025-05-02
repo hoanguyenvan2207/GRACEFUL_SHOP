@@ -152,10 +152,42 @@
           <div class="payment-row">
             <span class="label">Hình thức mua:</span>
             <span class="value">
-              {{ selectedHoaDon.hinhThucMuaHang != null ? (selectedHoaDon.hinhThucMuaHang ? 'Online' : 'Tại quầy') : '-'
-              }}
+              {{ selectedHoaDon.hinhThucMuaHang != null
+                ? (selectedHoaDon.hinhThucMuaHang ? 'Online' : 'Tại quầy')
+                : '-' }}
             </span>
           </div>
+
+          <!-- Nếu Tại quầy -->
+          <div class="payment-row" v-if="selectedHoaDon.hinhThucMuaHang === false">
+            <span class="label">Phương thức thanh toán:</span>
+            <span class="value">
+              <!-- Giả sử bạn lưu mã thanh toán tại quầy bằng biến phuongThucThanhToan -->
+              {{ selectedHoaDon.phuongThucThanhToan != null
+                ? (selectedHoaDon.phuongThucThanhToan
+                  ? 'Chuyển khoản' : 'Tiền mặt') : '-' }}
+            </span>
+          </div>
+
+          <!-- Nếu Online -->
+          <div class="payment-row" v-else-if="selectedHoaDon.hinhThucMuaHang === true">
+            <span class="label">Phương thức thanh toán:</span>
+            <span class="value">
+              <!-- Giả sử bạn lưu mã thanh toán online bằng biến phuongThucThanhToanOnline -->
+              {{ selectedHoaDon.phuongThucThanhToanOnline != null
+                ? (selectedHoaDon.phuongThucThanhToanOnline
+                  ? 'Thanh toán qua VNPay'
+                  : 'Thanh toán khi nhận hàng(COD)')
+                : '-' }}
+            </span>
+          </div>
+
+          <!-- Ngược lại (khi chưa chọn hình thức mua) -->
+          <div class="payment-row" v-else>
+            <span class="label">Phương thức thanh toán:</span>
+            <span class="value">-</span>
+          </div>
+
           <div class="payment-row">
             <span class="label">Tổng tiền hàng:</span>
             <span class="value">{{ formatCurrency(totalTienHang) }}</span>

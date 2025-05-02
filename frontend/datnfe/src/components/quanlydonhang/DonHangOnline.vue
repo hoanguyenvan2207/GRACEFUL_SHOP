@@ -150,6 +150,14 @@
               </span>
             </div>
             <div class="payment-row">
+              <span class="label">Phương Thức Thanh Toán:</span>
+              <span class="value">
+                {{ selectedDonHang.phuongThucThanhToanOnline != null ? (selectedDonHang.phuongThucThanhToanOnline ?
+                  'Thanh toán qua VNPay' :
+                  'Thanh toán khi nhận hàng(COD)') : '-' }}
+              </span>
+            </div>
+            <div class="payment-row">
               <span class="label">Tổng tiền hàng:</span>
               <span class="value">{{ formatCurrency(tinhTongTienHang) }}</span>
             </div>
