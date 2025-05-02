@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatGeminiService {
@@ -32,14 +34,78 @@ public class ChatGeminiService {
 
     public String getProductAdvice(String customerQuery) {
         try {
-            List<Map<String, Object>> products = sanPhamService.getAllProducts();
+            // 1. Lấy nguyên list products và topSellingProducts
+            List<Map<String, Object>> products         = sanPhamService.getAllProducts();
             List<Map<String, Object>> topSellingProducts = sanPhamService.getTopProductsSale();
 
-            String topSellingProductsJson = objectMapper.writeValueAsString(topSellingProducts);
-            String productsJson = objectMapper.writeValueAsString(products);
+            // 2. Rút gọn products
+            List<Map<String, Object>> minimalProducts = products.stream()
+                    .map(prod -> {
+                        Map<String, Object> m = new HashMap<>();
+                        m.put("maAoDai",      prod.get("maAoDai"));
+                        m.put("tenAoDai",     prod.get("tenAoDai"));
+                        m.put("tenChatLieu",  prod.get("tenChatLieu"));
+                        m.put("tenLoaiAoDai", prod.get("tenLoaiAoDai"));
+                        m.put("anhList",      prod.get("anhList"));
 
-            String prompt = createProductAdvicePrompt(productsJson,topSellingProductsJson, customerQuery);
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> spctList = ((List<Map<String, Object>>) prod.get("sanPhamChiTietList"))
+                                .stream()
+                                .map(spct -> {
+                                    Map<String, Object> s = new HashMap<>();
+                                    s.put("tenMauSac",          spct.get("tenMauSac"));
+                                    s.put("tenKichThuoc",       spct.get("tenKichThuoc"));
+                                    s.put("maKhuyenMai",        spct.get("maKhuyenMai"));
+                                    s.put("ngayBatDau",         spct.get("ngayBatDau"));
+                                    s.put("ngayKetThuc",        spct.get("ngayKetThuc"));
+                                    s.put("trangThaiKhuyenMai", spct.get("trangThaiKhuyenMai"));
+                                    return s;
+                                })
+                                .collect(Collectors.toList());
+                        m.put("sanPhamChiTietList", spctList);
 
+                        return m;
+                    })
+                    .collect(Collectors.toList());
+
+            // 3. Rút gọn topSellingProducts tương tự
+            List<Map<String, Object>> minimalTopSelling = topSellingProducts.stream()
+                    .map(prod -> {
+                        Map<String, Object> m = new HashMap<>();
+                        m.put("maAoDai",      prod.get("maAoDai"));
+                        m.put("tenAoDai",     prod.get("tenAoDai"));
+                        m.put("tenChatLieu",  prod.get("tenChatLieu"));
+                        m.put("tenLoaiAoDai", prod.get("tenLoaiAoDai"));
+                        m.put("anhList",      prod.get("anhList"));
+
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> spctList = ((List<Map<String, Object>>) prod.get("sanPhamChiTietList"))
+                                .stream()
+                                .map(spct -> {
+                                    Map<String, Object> s = new HashMap<>();
+                                    s.put("tenMauSac",          spct.get("tenMauSac"));
+                                    s.put("tenKichThuoc",       spct.get("tenKichThuoc"));
+                                    s.put("giaGoc",             spct.get("giaGoc"));
+                                    s.put("giaBan",             spct.get("giaBan"));
+                                    s.put("maKhuyenMai",        spct.get("maKhuyenMai"));
+                                    s.put("ngayBatDau",         spct.get("ngayBatDau"));
+                                    s.put("ngayKetThuc",        spct.get("ngayKetThuc"));
+                                    s.put("trangThaiKhuyenMai", spct.get("trangThaiKhuyenMai"));
+                                    return s;
+                                })
+                                .collect(Collectors.toList());
+                        m.put("sanPhamChiTietList", spctList);
+
+                        return m;
+                    })
+                    .collect(Collectors.toList());
+
+            // 4. Chuyển sang JSON và tạo prompt cho Gemini
+            String productsJson       = objectMapper.writeValueAsString(minimalProducts);
+            String topSellingJson     = objectMapper.writeValueAsString(minimalTopSelling);
+            String prompt             = createProductAdvicePrompt(productsJson, topSellingJson, customerQuery);
+
+            // 5. Gọi API Gemini
             return callGeminiAPI(prompt);
 
         } catch (Exception e) {
@@ -51,8 +117,6 @@ public class ChatGeminiService {
     private String createProductAdvicePrompt(String productsJson, String productTopsale, String customerQuery) {
         return "🌟 Chào mừng đến với Graceful! 🌟\n" +
                 "Bạn yêu quý ơi, hãy hóa thân thành một chuyên gia áo dài có tâm – có tầm – lại hài hước, dễ thương kiểu 'Graceful' nha! 😉\n\n" +
-                "⚠️ LƯU Ý: Trước khi trả lời, hãy kiểm tra xem mã sản phẩm có xuất hiện trong danh sách `productJon` không. " +
-                "Nếu có thì luôn tư vấn, chỉ khi không tìm thấy trong `productJon` mới báo là “chưa có sẵn”.\n\n" +
                 "Dưới đây là danh sách các mẫu áo dài hiện có trên website Graceful:\n" +
                 productsJson + "\n\n" +
                 "🔥 Top 5 mẫu 'bán chạy' nhất:\n" +
@@ -94,8 +158,10 @@ public class ChatGeminiService {
 
             // Thêm cấu hình để xử lý prompt dài hơn
             body.put("generationConfig", new JSONObject()
-                    .put("maxOutputTokens", 2048)
-                    .put("temperature", 0.7));
+                    .put("maxOutputTokens", 4096)
+                    .put("temperature", 0.2)
+                    .put("topP", 0.8)
+                    .put("topK", 40));
 
             HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
             RestTemplate restTemplate = new RestTemplate();

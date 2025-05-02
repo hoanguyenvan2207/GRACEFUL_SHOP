@@ -11,6 +11,7 @@ import com.example.datn_be.repository.san_pham.SanPhamRepository;
 import com.example.datn_be.service.sanpham.AnhService;
 import com.example.datn_be.service.sanpham.SanPhamService;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -185,18 +186,23 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public List<Map<String, Object>> getAllProducts() {
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(
+            String body = restTemplate.getForObject(
                     "http://localhost:8080/api/san-pham/list/filter-products",
-                    String.class);
+                    String.class
+            );
+            JsonNode root = objectMapper.readTree(body);
 
-            // Chuyển đổi response thành List<Map>
-            return objectMapper.readValue(
-                    response.getBody(),
-                    new TypeReference<List<Map<String, Object>>>() {});
+            JsonNode contentNode = root.path("content");
+            if (!contentNode.isArray()) {
+                return new ArrayList<>();
+            }
 
+            return objectMapper.convertValue(
+                    contentNode,
+                    new TypeReference<List<Map<String, Object>>>() {}
+            );
         } catch (Exception e) {
             e.printStackTrace();
-            // Trả về danh sách rỗng nếu có lỗi
             return new ArrayList<>();
         }
     }
@@ -204,21 +210,34 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public List<Map<String, Object>> getTopProductsSale() {
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(
+            String body = restTemplate.getForObject(
                     "http://localhost:8080/api/san-pham/top-sell",
-                    String.class);
+                    String.class
+            );
+            JsonNode root = objectMapper.readTree(body);
 
-            // Chuyển đổi response thành List<Map>
-            return objectMapper.readValue(
-                    response.getBody(),
-                    new TypeReference<List<Map<String, Object>>>() {});
+            JsonNode arrayNode;
+            if (root.isArray()) {
+                arrayNode = root;
+            } else {
+                arrayNode = root.path("content");
+            }
 
+            if (!arrayNode.isArray()) {
+                return new ArrayList<>();
+            }
+
+            return objectMapper.convertValue(
+                    arrayNode,
+                    new TypeReference<List<Map<String, Object>>>() {}
+            );
         } catch (Exception e) {
             e.printStackTrace();
-            // Trả về danh sách rỗng nếu có lỗi
             return new ArrayList<>();
         }
     }
+
+
 
     @Override
     public List<SanPhamDTO> getSanPhamAll() {
