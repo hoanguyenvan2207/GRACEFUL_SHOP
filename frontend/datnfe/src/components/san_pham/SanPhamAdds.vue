@@ -544,7 +544,6 @@ const handleSubmit = async () => {
             submitting.value = true;
             formState.trangThai = submissionType.value === 'show';
             formState.tenAoDai = formState.tenAoDai.replace(/\s+/g, " ").trim();
-            formState.moTa = formState.moTa.replace(/\s+/g, " ").trim();
             try {
                 await formRef.value.validateFields();
 
