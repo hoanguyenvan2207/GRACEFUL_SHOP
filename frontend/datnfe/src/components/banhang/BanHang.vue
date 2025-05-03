@@ -773,29 +773,44 @@ export default {
       }
     },
     async processThanhToan() {
+      const isBank = this.selectedPaymentMethod === "1";
       const hoaDonThanhToan = {
         id: this.activeTab,
-        phuongThucThanhToan: this.selectedPaymentMethod === "1",
+        phuongThucThanhToan: isBank,
         giamGia: this.selectedGiamGiaId ? { id: Number(this.selectedGiamGiaId) } : null,
         khachHang: { soDienThoai: this.soDienThoai },
         nhanVien: { id: Number(sessionStorage.getItem("idNhanVien")) },
       };
 
-      // Hiển thị modal ngay lập tức với QR tạm thời
-      const qrModal = this.showQRCodeModal(
-        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1ZjVmNSIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNjY2MiPkxvYWRpbmcgUVIgQ29kZTwvdGV4dD48L3N2Zz4=",
-        this.tongTien,
-        "Đang tạo..."
-      );
+      if (!this.danhSachHoaDonChiTiet || this.danhSachHoaDonChiTiet.length === 0) {
+        notification.error({
+          message: "Lỗi",
+          description: "Hoá đơn chưa có sản phẩm nào, không thể thanh toán.",
+        });
+        return;
+      }
+
+      if (!this.soDienThoai && !this.tenKhachHang) {
+        notification.error({
+          message: "Lỗi",
+          description: "Vui lòng chọn khách hàng.",
+        });
+        return;
+      }
+
+      let qrModal;
+      if (isBank) {
+        qrModal = this.showQRCodeModal(
+          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y1ZjVmNSIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNjY2MiPkxvYWRpbmcgUVIgQ29kZTwvdGV4dD48L3N2Zz4=", // QR tạm
+          this.tongTien,
+          "Đang tạo..."
+        );
+      }
 
       try {
-        const response = await axios.post(
-          "/api/ban-hang/thanh-toan",
-          hoaDonThanhToan
-        );
+        const response = await axios.post("/api/ban-hang/thanh-toan", hoaDonThanhToan);
 
-        if (response.data.qrCode) {
-          // Cập nhật modal với QR thật và dữ liệu mới
+        if (isBank && response.data.qrCode) {
           this.updateQRModal(
             qrModal,
             response.data.qrCode,
@@ -803,28 +818,31 @@ export default {
             response.data.txnRef
           );
         } else {
-          qrModal.destroy();
+          if (isBank) qrModal.destroy();
           notification.success({
             message: "Thành công!",
-            description: response.data,
+            description: isBank
+              ? `Đã tạo yêu cầu chuyển khoản, mã TXN: ${response.data.txnRef}`
+              : response.data,
           });
           this.resetForm();
         }
       } catch (error) {
-        qrModal.destroy();
-        if (error.response?.data) {
-          notification.error({ message: "Lỗi", description: error.response.data });
-        }
+        if (isBank && qrModal) qrModal.destroy();
+        notification.error({
+          message: "Lỗi",
+          description: error.response?.data || "Không thể thanh toán",
+        });
       }
     },
 
+
     showQRCodeModal(qrCodeBase64, amount, txnRef) {
-      // Sử dụng biến tham chiếu để cập nhật giá trị
       const modalData = {
         qrCodeBase64,
         amount,
         txnRef,
-        confirmedAmount: amount // Lưu trữ số tiền để sử dụng khi xác nhận
+        confirmedAmount: amount
       };
 
       const modal = Modal.confirm({
@@ -835,7 +853,7 @@ export default {
         cancelText: "Hủy",
         onOk: async () => {
           try {
-            await axios.post("/api/ban-hang/xac-nhan-thanh-toan", {
+            await axios.post("/ban-hang/xac-nhan-thanh-toan", {
               id: this.activeTab
             });
             notification.success({
@@ -854,17 +872,15 @@ export default {
         },
       });
 
-      // Lưu reference để cập nhật sau
       modal._modalData = modalData;
       return modal;
     },
 
     updateQRModal(modal, qrCodeBase64, amount, txnRef) {
-      // Cập nhật cả dữ liệu modal và số tiền xác nhận
       modal._modalData.qrCodeBase64 = qrCodeBase64;
       modal._modalData.amount = amount;
       modal._modalData.txnRef = txnRef;
-      modal._modalData.confirmedAmount = amount; // Quan trọng: cập nhật số tiền cho xác nhận
+      modal._modalData.confirmedAmount = amount;
 
       modal.update({
         content: () => this.renderQRModalContent(modal._modalData, false)
@@ -932,7 +948,6 @@ export default {
         ]
       );
     },
-
     resetForm() {
       this.fetchHoaDonChuaThanhToan();
       this.fetchDanhSachAoDai();
@@ -953,8 +968,7 @@ export default {
       }
 
       if (this.selectedPaymentMethod === "1") {
-        // For bank transfer, directly call process method
-        // The QR code will be shown in the response handling
+
         await this.processThanhToan();
       } else if (this.selectedPaymentMethod === "0") {
         // Cash payment confirmation
