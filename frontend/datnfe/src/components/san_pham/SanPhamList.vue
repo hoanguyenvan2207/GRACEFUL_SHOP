@@ -535,7 +535,7 @@ const exportExcel = async (option) => {
     const data = productsToExport.map(product => ({
       "Mã Áo Dài": product.maAoDai,
       "Tên Áo Dài": product.tenAoDai,
-      "Loại Áo Dài": product.tenAoDai,
+      "Loại Áo Dài": product.tenLoaiAoDai,
       "Chất Liệu": product.tenChatLieu,
       "Tà Áo": product.tenTaAo,
       "Nhà Cung Cấp": product.tenNhaCungCap,
